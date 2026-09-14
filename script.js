@@ -1,175 +1,254 @@
+// Nemesis QR Hub
+// Supabase + Admin Authentication
 
-// Nemesis QR Hub 
-// Supabase + Admin Authentication 
 const SUPABASE_URL = "https://oioudjbgrtvkbqhwfosw.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_eEJjuP4lyJ1AI7peckWdUg_6KvCkv_j";
 
-const supabase = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
-);
+// KEEP YOUR EXISTING PUBLISHABLE KEY HERE
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_eEJjuP4lyJ1AI7peckWdUg_6KvCkv_j";
 
-console.log("Nemesis QR Hub loaded successfully.");
+function startNemesisQR() {
 
+  if (!window.supabase) {
+    const loginMessage = document.getElementById("login-message");
+    const adminStatus = document.getElementById("admin-status");
 
-/* =================================
-   ADMIN LOGIN
-   ================================= */
+    const message = "✗ Supabase library did not load.";
 
-const loginForm = document.getElementById("login-form");
-const loginMessage = document.getElementById("login-message");
+    if (loginMessage) loginMessage.textContent = message;
+    if (adminStatus) adminStatus.textContent = message;
 
-if (loginForm) {
-
-  loginForm.addEventListener("submit", async function (event) {
-
-    event.preventDefault();
-
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-
-    loginMessage.textContent = "Signing in...";
-
-    try {
-
-      const { data, error } =
-        await supabase.auth.signInWithPassword({
-          email: email,
-          password: password
-        });
-
-      if (error) {
-
-        loginMessage.textContent =
-          "✗ " + error.message;
-
-        console.error("Login error:", error);
-
-        return;
-      }
-
-      if (!data || !data.user) {
-
-        loginMessage.textContent =
-          "✗ Login failed. No authenticated user was returned.";
-
-        return;
-      }
-
-      console.log("Login successful:", data.user);
-
-      loginMessage.textContent =
-        "✓ Login successful. Opening dashboard...";
-
-      setTimeout(function () {
-        window.location.href = "dashboard.html";
-      }, 800);
-
-    } catch (requestError) {
-
-      loginMessage.textContent =
-        "✗ Login request failed: " +
-        requestError.message;
-
-      console.error(
-        "Authentication request failed:",
-        requestError
-      );
-
-    }
-
-  });
-
-}
-
-
-/* =================================
-   ADMIN DASHBOARD SECURITY
-   ================================= */
-
-const adminStatus = document.getElementById("admin-status");
-const logoutButton = document.getElementById("logout-button");
-
-if (adminStatus) {
-
-  async function checkAdminAccess() {
-
-    adminStatus.textContent =
-      "Checking administrator access...";
-
-    const {
-      data: { user },
-      error: sessionError
-    } = await supabase.auth.getUser();
-
-    if (sessionError || !user) {
-
-      console.warn("No authenticated user.");
-
-      window.location.href = "login.html";
-
-      return;
-    }
-
-    const { data: admin, error: adminError } =
-      await supabase
-        .from("admin_users")
-        .select("id, role")
-        .eq("auth_user_id", user.id)
-        .in("role", ["owner", "admin"])
-        .maybeSingle();
-
-    if (adminError || !admin) {
-
-      console.error("Administrator verification failed:", adminError);
-
-      adminStatus.textContent =
-        "✗ Administrator access denied.";
-
-      await supabase.auth.signOut();
-
-      setTimeout(function () {
-        window.location.href = "login.html";
-      }, 1500);
-
-      return;
-    }
-
-    adminStatus.textContent =
-      "✓ Administrator authenticated — " + admin.role;
-
-    console.log(
-      "Nemesis admin verified:",
-      user.id,
-      admin.role
-    );
+    return;
   }
 
-  checkAdminAccess();
+  const supabase = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+
+  console.log("Nemesis QR Hub loaded successfully.");
+
+  /* =========================
+     ADMIN LOGIN
+     ========================= */
+
+  const loginForm = document.getElementById("login-form");
+  const loginMessage = document.getElementById("login-message");
+
+  if (loginForm && loginMessage) {
+
+    loginForm.addEventListener("submit", async function(event) {
+
+      event.preventDefault();
+
+      const email =
+        document.getElementById("email").value.trim();
+
+      const password =
+        document.getElementById("password").value;
+
+      const button =
+        loginForm.querySelector("button[type='submit']");
+
+      loginMessage.textContent = "Signing in...";
+
+      if (button) {
+        button.disabled = true;
+      }
+
+      try {
+
+        const { data, error } =
+          await supabase.auth.signInWithPassword({
+            email: email,
+            password: password
+          });
+
+        if (error) {
+
+          loginMessage.textContent =
+            "✗ " + error.message;
+
+          console.error("Login error:", error);
+
+          if (button) {
+            button.disabled = false;
+          }
+
+          return;
+        }
+
+        if (!data || !data.user) {
+
+          loginMessage.textContent =
+            "✗ Login failed. No authenticated user was returned.";
+
+          if (button) {
+            button.disabled = false;
+          }
+
+          return;
+        }
+
+        loginMessage.textContent =
+          "✓ Login successful. Opening dashboard...";
+
+        setTimeout(function() {
+
+          window.location.replace("dashboard.html");
+
+        }, 700);
+
+      } catch (error) {
+
+        loginMessage.textContent =
+          "✗ Login request failed: " +
+          error.message;
+
+        console.error(
+          "Authentication request failed:",
+          error
+        );
+
+        if (button) {
+          button.disabled = false;
+        }
+      }
+
+    });
+  }
+
+
+  /* =========================
+     ADMIN DASHBOARD SECURITY
+     ========================= */
+
+  const adminStatus =
+    document.getElementById("admin-status");
+
+  const logoutButton =
+    document.getElementById("logout-button");
+
+  if (adminStatus) {
+
+    async function checkAdminAccess() {
+
+      adminStatus.textContent =
+        "Checking administrator access...";
+
+      try {
+
+        const {
+          data: { user },
+          error: sessionError
+        } = await supabase.auth.getUser();
+
+        if (sessionError || !user) {
+
+          window.location.replace("login.html");
+
+          return;
+        }
+
+        const {
+          data: admin,
+          error: adminError
+        } = await supabase
+          .from("admin_users")
+          .select("id, role")
+          .eq("auth_user_id", user.id)
+          .in("role", ["owner", "admin"])
+          .maybeSingle();
+
+        if (adminError || !admin) {
+
+          console.error(
+            "Administrator verification failed:",
+            adminError
+          );
+
+          adminStatus.textContent =
+            "✗ Administrator access denied.";
+
+          await supabase.auth.signOut();
+
+          setTimeout(function() {
+
+            window.location.replace("login.html");
+
+          }, 1200);
+
+          return;
+        }
+
+        adminStatus.textContent =
+          "✓ Administrator authenticated — " +
+          admin.role;
+
+      } catch (error) {
+
+        console.error(
+          "Dashboard security check failed:",
+          error
+        );
+
+        adminStatus.textContent =
+          "✗ Administrator verification failed.";
+      }
+    }
+
+    checkAdminAccess();
+  }
+
+
+  /* =========================
+     SIGN OUT
+     ========================= */
+
+  if (logoutButton) {
+
+    logoutButton.addEventListener(
+      "click",
+      async function() {
+
+        logoutButton.textContent =
+          "Signing out...";
+
+        const { error } =
+          await supabase.auth.signOut();
+
+        if (error) {
+
+          console.error(
+            "Sign out error:",
+            error
+          );
+
+          logoutButton.textContent =
+            "Sign Out";
+
+          return;
+        }
+
+        window.location.replace("login.html");
+      }
+    );
+  }
 }
 
 
-/* =================================
-   SIGN OUT
-   ================================= */
+/* =========================
+   START APPLICATION
+   ========================= */
 
-if (logoutButton) {
+if (document.readyState === "loading") {
 
-  logoutButton.addEventListener("click", async function () {
+  document.addEventListener(
+    "DOMContentLoaded",
+    startNemesisQR
+  );
 
-    logoutButton.textContent = "Signing out...";
+} else {
 
-    const { error } = await supabase.auth.signOut();
+  startNemesisQR();
 
-    if (error) {
-
-      console.error("Sign out error:", error);
-
-      logoutButton.textContent = "Sign Out";
-
-      return;
-    }
-
-    window.location.href = "login.html";
-  });
 }
