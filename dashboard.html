@@ -53,10 +53,91 @@
 
     <section class="dashboard-grid">
 
-      <div class="dashboard-card">
-        <h2>Customers</h2>
-        <p>Manage Nemesis QR customers.</p>
-        <span>Coming next</span>
+      <div class="dashboard-card customer-management-card">
+
+  <h2>Customers</h2>
+
+  <p>Manage Nemesis QR customers.</p>
+
+  <button
+    id="add-customer-button"
+    class="button"
+    type="button"
+  >
+    + Add Customer
+  </button>
+
+  <div
+    id="customer-form-container"
+    class="customer-form-container"
+    hidden
+  >
+
+    <h3>Add New Customer</h3>
+
+    <form id="customer-form">
+
+      <label for="customer-name">
+        Customer Name
+      </label>
+
+      <input
+        type="text"
+        id="customer-name"
+        placeholder="Customer or business name"
+        required
+      >
+
+      <label for="customer-type">
+        Customer Type
+      </label>
+
+      <select id="customer-type" required>
+        <option value="">Select type</option>
+        <option value="business">Business</option>
+        <option value="individual">Individual</option>
+      </select>
+
+      <label for="customer-status">
+        Status
+      </label>
+
+      <select id="customer-status" required>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+
+      <button
+        type="submit"
+        class="button"
+      >
+        Save Customer
+      </button>
+
+      <button
+        type="button"
+        id="cancel-customer-button"
+        class="button secondary-button"
+      >
+        Cancel
+      </button>
+
+    </form>
+
+    <p id="customer-message"></p>
+
+  </div>
+
+  <div class="customer-list-section">
+
+    <h3>Customers</h3>
+
+    <div id="customer-list">
+      <p>No customers loaded yet.</p>
+    </div>
+
+  </div>
+
       </div>
 
       <div class="dashboard-card">
