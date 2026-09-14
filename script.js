@@ -1,29 +1,21 @@
 // Nemesis QR Hub
-// Supabase connection test
+// Supabase diagnostic test
 
-const SUPABASE_URL = "https://oioudjbgrtvkbqhwfosw.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_eEJjuP4lyJ1AI7peckWdUg_6KvCkv_j";
+const test = document.createElement("p");
 
-const supabase = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
-);
+test.style.cssText =
+  "text-align:center;padding:15px;margin:20px;color:#39d353;font-weight:bold;";
 
-console.log("Nemesis QR Hub loaded successfully.");
+test.textContent = "✓ script.js is running.";
 
-supabase.auth.getSession().then(({ data, error }) => {
-  const test = document.createElement("p");
+document.body.appendChild(test);
 
-  test.style.cssText =
-    "text-align:center;padding:15px;margin:20px;color:#39d353;font-weight:bold;";
+console.log("Nemesis QR Hub: script.js is running.");
 
-  if (error) {
-    test.textContent = "Supabase connection test failed.";
-    console.error(error);
-  } else {
-    test.textContent = "✓ Nemesis QR Hub connected to Supabase.";
-    console.log("Supabase connection test successful.");
-  }
-
-  document.body.appendChild(test);
-});
+if (window.supabase) {
+  test.textContent += " Supabase library is loaded.";
+  console.log("Nemesis QR Hub: Supabase library is loaded.");
+} else {
+  test.textContent += " Supabase library is NOT loaded.";
+  console.error("Nemesis QR Hub: Supabase library is NOT loaded.");
+}
