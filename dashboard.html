@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Nemesis QR | Dashboard</title>
+  <meta
+    name="description"
+    content="Nemesis QR secure administration dashboard."
+  >
+
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+  <main class="dashboard-page">
+
+    <section class="dashboard-header">
+
+      <div>
+        <div class="login-logo">
+          NEMESIS <span class="accent">QR</span>
+        </div>
+
+        <h1>Dashboard</h1>
+
+        <p>
+          Secure Nemesis QR management center
+        </p>
+      </div>
+
+      <button id="logout-button" class="button">
+        Sign Out
+      </button>
+
+    </section>
+
+
+    <section class="dashboard-status">
+
+      <h2>System Status</h2>
+
+      <p id="admin-status">
+        Checking administrator access...
+      </p>
+
+    </section>
+
+
+    <section class="dashboard-grid">
+
+      <div class="dashboard-card">
+        <h2>Customers</h2>
+        <p>Manage Nemesis QR customers.</p>
+        <span>Coming next</span>
+      </div>
+
+      <div class="dashboard-card">
+        <h2>Business Profiles</h2>
+        <p>Manage customer business information.</p>
+        <span>Coming next</span>
+      </div>
+
+      <div class="dashboard-card">
+        <h2>Services & Links</h2>
+        <p>Manage services, products and contact links.</p>
+        <span>Coming next</span>
+      </div>
+
+      <div class="dashboard-card">
+        <h2>QR Destinations</h2>
+        <p>Manage dynamic QR destinations.</p>
+        <span>Coming next</span>
+      </div>
+
+      <div class="dashboard-card">
+        <h2>QR Codes</h2>
+        <p>Manage generated QR codes.</p>
+        <span>Coming next</span>
+      </div>
+
+    </section>
+
+
+    <p id="dashboard-message"></p>
+
+    <a href="index.html" class="back-link">
+      ← Back to Nemesis QR Hub
+    </a>
+
+  </main>
+
+  <script src="script.js" defer></script>
+
+</body>
+</html>
