@@ -32,66 +32,51 @@ if (loginForm) {
 
     try {
 
-  const response = await fetch(
-    SUPABASE_URL + "/auth/v1/token?grant_type=password",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "apikey": SUPABASE_PUBLISHABLE_KEY
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password
-      })
-    }
-  );
+      const { data, error } =
+        await supabase.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
 
-  const result = await response.json();
+      if (error) {
 
-  console.log("Supabase authentication response:", result);
+        loginMessage.textContent =
+          "✗ " + error.message;
 
-  if (!response.ok) {
-    loginMessage.textContent =
-      "✗ Supabase returned: " +
-      (result.error_description || result.msg || result.error || "Unknown error");
+        console.error("Login error:", error);
 
-    return;
-  }
+        return;
+      }
 
-  loginMessage.textContent =
-    "✓ Supabase authentication accepted.";
+      if (!data || !data.user) {
 
-  console.log("Authentication successful.");
+        loginMessage.textContent =
+          "✗ Login failed. No authenticated user was returned.";
 
-} catch (requestError) {
+        return;
+      }
 
-  loginMessage.textContent =
-    "✗ Network error: " + requestError.message;
+      console.log("Login successful:", data.user);
 
-  console.error("Authentication request failed:", requestError);
-
-  return;
-    }
-
-
-    if (error) {
       loginMessage.textContent =
-  "✗ " + error.message;
+        "✓ Login successful. Opening dashboard...";
 
-console.error("Login error:", error);
+      setTimeout(function () {
+        window.location.href = "dashboard.html";
+      }, 800);
 
-      return;
+    } catch (requestError) {
+
+      loginMessage.textContent =
+        "✗ Login request failed: " +
+        requestError.message;
+
+      console.error(
+        "Authentication request failed:",
+        requestError
+      );
+
     }
-
-    console.log("Login successful:", data.user);
-
-    loginMessage.textContent =
-      "✓ Login successful. Opening dashboard...";
-
-    setTimeout(function () {
-      window.location.href = "dashboard.html";
-    }, 800);
 
   });
 
