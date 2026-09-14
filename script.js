@@ -230,20 +230,7 @@ adminStatus.textContent =
 }
 
 
-/* =========================
-   START APPLICATION
-   ========================= */
 
-if (document.readyState === "loading") {
-
-  document.addEventListener(
-    "DOMContentLoaded",
-    startNemesisQR
-  );
-
-} else {
-
-  startNemesisQR();
 =====================
    START APPLICATION
    ========================= */
