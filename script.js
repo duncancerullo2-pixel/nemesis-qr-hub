@@ -30,11 +30,28 @@ if (loginForm) {
 
     loginMessage.textContent = "Signing in...";
 
-    const { data, error } =
-      await supabase.auth.signInWithPassword({
-        email: email,
-        password: password
-      });
+    const loginRequest = supabase.auth.signInWithPassword({
+  email: email,
+  password: password
+});
+
+const timeout = new Promise((_, reject) =>
+  setTimeout(() => reject(new Error("Authentication request timed out.")), 10000)
+);
+
+let data;
+let error;
+
+try {
+  ({ data, error } = await Promise.race([
+    loginRequest,
+    timeout
+  ]));
+} catch (requestError) {
+  loginMessage.textContent = "✗ " + requestError.message;
+  console.error("Authentication request:", requestError);
+  return;
+}
 
     if (error) {
       loginMessage.textContent =
