@@ -30,28 +30,50 @@ if (loginForm) {
 
     loginMessage.textContent = "Signing in...";
 
-    const loginRequest = supabase.auth.signInWithPassword({
-  email: email,
-  password: password
-});
+    try {
 
-const timeout = new Promise((_, reject) =>
-  setTimeout(() => reject(new Error("Authentication request timed out.")), 10000)
-);
+  const response = await fetch(
+    SUPABASE_URL + "/auth/v1/token?grant_type=password",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_PUBLISHABLE_KEY
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password
+      })
+    }
+  );
 
-let data;
-let error;
+  const result = await response.json();
 
-try {
-  ({ data, error } = await Promise.race([
-    loginRequest,
-    timeout
-  ]));
+  console.log("Supabase authentication response:", result);
+
+  if (!response.ok) {
+    loginMessage.textContent =
+      "✗ Supabase returned: " +
+      (result.error_description || result.msg || result.error || "Unknown error");
+
+    return;
+  }
+
+  loginMessage.textContent =
+    "✓ Supabase authentication accepted.";
+
+  console.log("Authentication successful.");
+
 } catch (requestError) {
-  loginMessage.textContent = "✗ " + requestError.message;
-  console.error("Authentication request:", requestError);
+
+  loginMessage.textContent =
+    "✗ Network error: " + requestError.message;
+
+  console.error("Authentication request failed:", requestError);
+
   return;
-}
+    }
+
 
     if (error) {
       loginMessage.textContent =
