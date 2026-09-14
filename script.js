@@ -1,4 +1,4 @@
-alert("Nemesis QR JavaScript is running");
+
 // Nemesis QR Hub 
 // Supabase + Admin Authentication 
 const SUPABASE_URL = "https://oioudjbgrtvkbqhwfosw.supabase.co";
