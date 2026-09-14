@@ -198,3 +198,92 @@ footer {
     flex-direction: column;
   }
   }
+/* ================================
+   Nemesis QR Admin Login
+   ================================ */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 30px;
+  background: #101414;
+  border: 1px solid #202828;
+  border-radius: 16px;
+  box-sizing: border-box;
+}
+
+.login-logo {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.login-card h1 {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.login-subtitle {
+  text-align: center;
+  opacity: 0.7;
+  margin-bottom: 25px;
+}
+
+#login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#login-form label {
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+#login-form input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px;
+  border: 1px solid #303838;
+  border-radius: 8px;
+  background: #070909;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+#login-form input:focus {
+  outline: 2px solid #39d353;
+  border-color: #39d353;
+}
+
+#login-form .button {
+  margin-top: 15px;
+  width: 100%;
+}
+
+#login-message {
+  text-align: center;
+  margin-top: 18px;
+  font-weight: bold;
+}
+
+.back-link {
+  display: block;
+  text-align: center;
+  margin-top: 22px;
+  color: #39d353;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
