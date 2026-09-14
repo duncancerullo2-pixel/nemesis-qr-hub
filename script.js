@@ -1,57 +1,59 @@
 // Nemesis QR Hub
-// Supabase connection diagnostic
+// Supabase connection + Admin Login
 
 const SUPABASE_URL = "https://oioudjbgrtvkbqhwfosw.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_eEJjuP4lyJ1AI7peckWdUg_6KvCkv_j";
 
-const test = document.createElement("p");
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
 
-test.style.cssText =
-  "text-align:center;padding:15px;margin:20px;color:#39d353;font-weight:bold;";
+console.log("Nemesis QR Hub loaded successfully.");
 
-test.textContent = "✓ script.js is running.";
 
-document.body.appendChild(test);
+/* ================================
+   Admin Login
+   ================================ */
 
-console.log("Step 1: script.js is running.");
+const loginForm = document.getElementById("login-form");
+const loginMessage = document.getElementById("login-message");
 
-if (!window.supabase) {
-  test.textContent = "✗ Supabase library is not loaded.";
-  console.error("Step 2 failed: Supabase library is not loaded.");
-} else {
-  test.textContent = "✓ Supabase library loaded. Creating client...";
+if (loginForm) {
 
-  console.log("Step 2: Supabase library loaded.");
+  loginForm.addEventListener("submit", async function (event) {
 
-  try {
-    const supabase = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY
-    );
+    event.preventDefault();
 
-    test.textContent = "✓ Client created. Contacting Supabase...";
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
 
-    console.log("Step 3: Supabase client created.");
+    loginMessage.textContent = "Signing in...";
 
-    supabase.auth.getSession().then(({ error }) => {
-      if (error) {
-        test.textContent =
-          "✗ Supabase responded with an error. Check the browser console.";
-        console.error("Step 4: Supabase error:", error);
-      } else {
-        test.textContent =
-          "✓ Supabase connection successful!";
-        console.log("Step 4: Supabase responded successfully.");
-      }
-    }).catch((error) => {
-      test.textContent =
-        "✗ Supabase request failed.";
-      console.error("Step 4: Supabase request failed:", error);
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password
     });
 
-  } catch (error) {
-    test.textContent =
-      "✗ Could not create Supabase client.";
-    console.error("Step 3 failed:", error);
-  }
+    if (error) {
+
+      loginMessage.textContent =
+        "✗ Login failed. Please check your email and password.";
+
+      console.error("Login error:", error);
+
+      return;
+    }
+
+    console.log("Login successful:", data.user);
+
+    loginMessage.textContent =
+      "✓ Login successful. Opening dashboard...";
+
+    setTimeout(function () {
+      window.location.href = "dashboard.html";
+    }, 800);
+
+  });
+
 }
