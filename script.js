@@ -244,46 +244,21 @@ if (document.readyState === "loading") {
 } else {
 
   startNemesisQR();
-
-}
-/* =========================
-   CUSTOMER MANAGEMENT
+=====================
+   START APPLICATION
    ========================= */
 
-const addCustomerButton =
-  document.getElementById("add-customer-button");
+if (document.readyState === "loading") {
 
-const customerFormContainer =
-  document.getElementById("customer-form-container");
-
-const cancelCustomerButton =
-  document.getElementById("cancel-customer-button");
-
-if (addCustomerButton && customerFormContainer) {
-
-  addCustomerButton.addEventListener(
-    "click",
-    function () {
-
-      customerFormContainer.hidden = false;
-      addCustomerButton.hidden = true;
-
-    }
+  document.addEventListener(
+    "DOMContentLoaded",
+    startNemesisQR
   );
-}
 
-if (cancelCustomerButton && customerFormContainer) {
+} else {
 
-  cancelCustomerButton.addEventListener(
-    "click",
-    function () {
+  startNemesisQR();
 
-      customerFormContainer.hidden = true;
+  }
 
-      if (addCustomerButton) {
-        addCustomerButton.hidden = false;
-      }
 
-    }
-  );
-}
