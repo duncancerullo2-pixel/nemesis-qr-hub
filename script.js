@@ -150,39 +150,33 @@ function startNemesisQR() {
         }
 
         const {
-          data: admin,
-          error: adminError
-        } = await supabase
-          .from("admin_users")
-          .select("id, role")
-          .eq("auth_user_id", user.id)
-          .in("role", ["owner", "admin"])
-          .maybeSingle();
+  data: isAdmin,
+  error: adminError
+} = await supabase.rpc("is_nemesis_admin");
 
-        if (adminError || !admin) {
+if (adminError || !isAdmin) {
 
-          console.error(
-            "Administrator verification failed:",
-            adminError
-          );
+  console.error(
+    "Administrator verification failed:",
+    adminError
+  );
 
-          adminStatus.textContent =
-            "✗ Administrator access denied.";
+  adminStatus.textContent =
+    "✗ Administrator access denied.";
 
-          await supabase.auth.signOut();
+  await supabase.auth.signOut();
 
-          setTimeout(function() {
+  setTimeout(function() {
 
-            window.location.replace("login.html");
+    window.location.replace("login.html");
 
-          }, 1200);
+  }, 1200);
 
-          return;
-        }
+  return;
+}
 
-        adminStatus.textContent =
-          "✓ Administrator authenticated — " +
-          admin.role;
+adminStatus.textContent =
+  "✓ Administrator authenticated — Admin";
 
       } catch (error) {
 
