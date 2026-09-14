@@ -246,26 +246,44 @@ if (document.readyState === "loading") {
   startNemesisQR();
 
 }
-// Customer management
-document.addEventListener("DOMContentLoaded", function () {
-  const addCustomerButton = document.getElementById("add-customer-button");
-  const customerFormContainer = document.getElementById("customer-form-container");
-  const cancelCustomerButton = document.getElementById("cancel-customer-button");
+/* =========================
+   CUSTOMER MANAGEMENT
+   ========================= */
 
-  if (addCustomerButton && customerFormContainer) {
-    addCustomerButton.addEventListener("click", function () {
+const addCustomerButton =
+  document.getElementById("add-customer-button");
+
+const customerFormContainer =
+  document.getElementById("customer-form-container");
+
+const cancelCustomerButton =
+  document.getElementById("cancel-customer-button");
+
+if (addCustomerButton && customerFormContainer) {
+
+  addCustomerButton.addEventListener(
+    "click",
+    function () {
+
       customerFormContainer.hidden = false;
       addCustomerButton.hidden = true;
-    });
-  }
 
-  if (cancelCustomerButton && customerFormContainer) {
-    cancelCustomerButton.addEventListener("click", function () {
+    }
+  );
+}
+
+if (cancelCustomerButton && customerFormContainer) {
+
+  cancelCustomerButton.addEventListener(
+    "click",
+    function () {
+
       customerFormContainer.hidden = true;
 
       if (addCustomerButton) {
         addCustomerButton.hidden = false;
       }
-    });
-  }
-});
+
+    }
+  );
+}
