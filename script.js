@@ -37,11 +37,10 @@ if (loginForm) {
       });
 
     if (error) {
-
       loginMessage.textContent =
-        "✗ Login failed. Please check your email and password.";
+  "✗ " + error.message;
 
-      console.error("Login error:", error);
+console.error("Login error:", error);
 
       return;
     }
