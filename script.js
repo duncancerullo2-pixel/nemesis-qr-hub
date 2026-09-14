@@ -10,4 +10,20 @@ const supabase = window.supabase.createClient(
 );
 
 console.log("Nemesis QR Hub loaded successfully.");
-console.log("Supabase client created:", !!supabase);
+
+supabase.auth.getSession().then(({ data, error }) => {
+  const test = document.createElement("p");
+
+  test.style.cssText =
+    "text-align:center;padding:15px;margin:20px;color:#39d353;font-weight:bold;";
+
+  if (error) {
+    test.textContent = "Supabase connection test failed.";
+    console.error(error);
+  } else {
+    test.textContent = "✓ Nemesis QR Hub connected to Supabase.";
+    console.log("Supabase connection test successful.");
+  }
+
+  document.body.appendChild(test);
+});
