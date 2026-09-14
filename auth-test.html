@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nemesis QR | Authentication Test</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      background: #070909;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 25px;
+      line-height: 1.6;
+    }
+
+    .box {
+      max-width: 500px;
+      margin: 30px auto;
+      background: #101414;
+      padding: 25px;
+      border-radius: 15px;
+      border: 1px solid #202828;
+    }
+
+    h1 {
+      color: #39d353;
+    }
+
+    input, button {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 13px;
+      margin-top: 10px;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    input {
+      background: #070909;
+      color: white;
+      border: 1px solid #303838;
+    }
+
+    button {
+      background: #39d353;
+      color: #000;
+      border: none;
+      font-weight: bold;
+    }
+
+    #status {
+      margin: 20px 0;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+
+  <h1>NEMESIS QR</h1>
+
+  <h2>Authentication Test</h2>
+
+  <p id="status">Starting test...</p>
+
+  <form id="auth-test-form">
+
+    <input
+      type="email"
+      id="test-email"
+      placeholder="Admin email"
+      required
+    >
+
+    <input
+      type="password"
+      id="test-password"
+      placeholder="Admin password"
+      required
+    >
+
+    <button type="submit">
+      Test Login
+    </button>
+
+  </form>
+
+</div>
+
+<script>
+
+const status = document.getElementById("status");
+const form = document.getElementById("auth-test-form");
+
+const SUPABASE_URL =
+  "https://oioudjbgrtvkbqhwfosw.supabase.co";
+
+/*
+  IMPORTANT:
+  Replace ONLY the text below with your
+  EXISTING Supabase Publishable key.
+*/
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_eEJjuP4lyJ1AI7peckWdUg_6KvCkv_j";
+
+status.textContent =
+  "✓ JavaScript is running.";
+
+if (!window.supabase) {
+
+  status.textContent =
+    "✗ Supabase library did not load.";
+
+} else {
+
+  status.textContent =
+    "✓ Supabase library loaded.";
+
+  const client =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+  status.textContent =
+    "✓ Supabase client created.";
+
+  form.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    status.textContent =
+      "Sending authentication request...";
+
+    try {
+
+      const { data, error } =
+        await client.auth.signInWithPassword({
+
+          email:
+            document
+              .getElementById("test-email")
+              .value
+              .trim(),
+
+          password:
+            document
+              .getElementById("test-password")
+              .value
+
+        });
+
+      if (error) {
+
+        status.textContent =
+          "✗ Supabase response: " +
+          error.message;
+
+        return;
+      }
+
+      status.textContent =
+        "✓ Authentication accepted.";
+
+      console.log(data);
+
+    } catch (err) {
+
+      status.textContent =
+        "✗ Request failed: " +
+        err.message;
+
+    }
+
+  });
+
+}
+
+</script>
+
+</body>
+</html>
