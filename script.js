@@ -227,6 +227,255 @@ adminStatus.textContent =
       }
     );
   }
+    /* =========================
+     CUSTOMER MANAGEMENT
+     ========================= */
+
+  const addCustomerButton =
+    document.getElementById("add-customer-button");
+
+  const customerFormContainer =
+    document.getElementById("customer-form-container");
+
+  const cancelCustomerButton =
+    document.getElementById("cancel-customer-button");
+
+  const customerForm =
+    document.getElementById("customer-form");
+
+  const customerMessage =
+    document.getElementById("customer-message");
+
+  const customerList =
+    document.getElementById("customer-list");
+
+
+  /* SHOW CUSTOMER FORM */
+
+  if (addCustomerButton && customerFormContainer) {
+
+    addCustomerButton.addEventListener(
+      "click",
+      function() {
+
+        customerFormContainer.hidden = false;
+        addCustomerButton.hidden = true;
+
+      }
+    );
+
+  }
+
+
+  /* CANCEL CUSTOMER FORM */
+
+  if (cancelCustomerButton && customerFormContainer) {
+
+    cancelCustomerButton.addEventListener(
+      "click",
+      function() {
+
+        customerFormContainer.hidden = true;
+
+        if (addCustomerButton) {
+          addCustomerButton.hidden = false;
+        }
+
+        if (customerMessage) {
+          customerMessage.textContent = "";
+        }
+
+      }
+    );
+
+  }
+
+
+  /* LOAD CUSTOMERS */
+
+  async function loadCustomers() {
+
+    if (!customerList) {
+      return;
+    }
+
+    customerList.innerHTML =
+      "<p>Loading customers...</p>";
+
+    const {
+      data: customers,
+      error
+    } = await supabase
+      .from("customers")
+      .select(
+        "id, customer_code, customer_type, name, status, created_at"
+      )
+      .order(
+        "created_at",
+        { ascending: false }
+      );
+
+    if (error) {
+
+      console.error(
+        "Customer loading failed:",
+        error
+      );
+
+      customerList.innerHTML =
+        "<p>Unable to load customers.</p>";
+
+      return;
+    }
+
+    if (!customers || customers.length === 0) {
+
+      customerList.innerHTML =
+        "<p>No customers yet.</p>";
+
+      return;
+    }
+
+    customerList.innerHTML = "";
+
+    customers.forEach(function(customer) {
+
+      const customerCard =
+        document.createElement("div");
+
+      customerCard.className =
+        "customer-item";
+
+      customerCard.innerHTML = `
+        <strong>${customer.name}</strong>
+        <span>Code: ${customer.customer_code}</span>
+        <span>Type: ${customer.customer_type}</span>
+        <span>Status: ${customer.status}</span>
+      `;
+
+      customerList.appendChild(customerCard);
+
+    });
+
+  }
+
+
+  /* SAVE CUSTOMER */
+
+  if (customerForm) {
+
+    customerForm.addEventListener(
+      "submit",
+      async function(event) {
+
+        event.preventDefault();
+
+        const customerName =
+          document.getElementById(
+            "customer-name"
+          ).value.trim();
+
+        const customerType =
+          document.getElementById(
+            "customer-type"
+          ).value;
+
+        const customerStatus =
+          document.getElementById(
+            "customer-status"
+          ).value;
+
+
+        if (
+          !customerName ||
+          !customerType ||
+          !customerStatus
+        ) {
+
+          if (customerMessage) {
+            customerMessage.textContent =
+              "Please complete all fields.";
+          }
+
+          return;
+        }
+
+
+        if (customerMessage) {
+          customerMessage.textContent =
+            "Saving customer...";
+        }
+
+
+        const customerCode =
+          "NQR-" +
+          Date.now().toString().slice(-8);
+
+
+        const {
+          error
+        } = await supabase
+          .from("customers")
+          .insert({
+            customer_code: customerCode,
+            customer_type: customerType,
+            name: customerName,
+            status: customerStatus
+          });
+
+
+        if (error) {
+
+          console.error(
+            "Customer save failed:",
+            error
+          );
+
+          if (customerMessage) {
+            customerMessage.textContent =
+              "✗ Unable to save customer.";
+          }
+
+          return;
+        }
+
+
+        if (customerMessage) {
+          customerMessage.textContent =
+            "✓ Customer saved successfully.";
+        }
+
+
+        customerForm.reset();
+
+        document.getElementById(
+          "customer-status"
+        ).value = "active";
+
+
+        await loadCustomers();
+
+
+        setTimeout(function() {
+
+          customerFormContainer.hidden = true;
+          addCustomerButton.hidden = false;
+
+          if (customerMessage) {
+            customerMessage.textContent = "";
+          }
+
+        }, 1000);
+
+      }
+    );
+
+  }
+
+
+  /* LOAD CUSTOMER LIST */
+
+  await loadCustomers();
 }
 
 
