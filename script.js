@@ -137,17 +137,37 @@ function startNemesisQR() {
 
       try {
 
-      const {
-    data: { session },
-    error: sessionError
-} = await supabase.auth.getSession();
+      const sessionResult = await Promise.race([
+  supabase.auth.getSession(),
+  new Promise(function(resolve) {
+    setTimeout(function() {
+      resolve({
+        data: { session: null },
+        error: new Error("Authentication session check timed out.")
+      });
+    }, 5000);
+  })
+]);
+
+const session = sessionResult.data.session;
+const sessionError = sessionResult.error;
 
 if (sessionError || !session || !session.user) {
 
-    window.location.replace("login.html");
+  console.error(
+    "Session check failed:",
+    sessionError
+  );
 
-    return;
-} 
+  adminStatus.textContent =
+    "✗ Session check failed. Please log in again.";
+
+  setTimeout(function() {
+    window.location.replace("login.html");
+  }, 1500);
+
+  return;
+}
 
         const {
   data: isAdmin,
