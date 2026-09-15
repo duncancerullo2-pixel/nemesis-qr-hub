@@ -6,7 +6,7 @@ const SUPABASE_URL = "https://oioudjbgrtvkbqhwfosw.supabase.co";
 // KEEP YOUR EXISTING PUBLISHABLE KEY HERE
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_eEJjuP4lyJ1AI7peckWdUg_6KvCkv_j";
 
-function startNemesisQR() {
+async function startNemesisQR() {
 
   if (!window.supabase) {
     const loginMessage = document.getElementById("login-message");
