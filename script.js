@@ -137,17 +137,17 @@ function startNemesisQR() {
 
       try {
 
-        const {
-          data: { user },
-          error: sessionError
-        } = await supabase.auth.getUser();
+      const {
+    data: { session },
+    error: sessionError
+} = await supabase.auth.getSession();
 
-        if (sessionError || !user) {
+if (sessionError || !session || !session.user) {
 
-          window.location.replace("login.html");
+    window.location.replace("login.html");
 
-          return;
-        }
+    return;
+} 
 
         const {
   data: isAdmin,
