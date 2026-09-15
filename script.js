@@ -25,7 +25,7 @@ async function startNemesisQR() {
     SUPABASE_PUBLISHABLE_KEY
   );
 console.log("NEMESIS QR SCRIPT IS RUNNING");
-  document.body.innerHTML = "<h2>NEMESIS JAVASCRIPT IS RUNNING</h2>";
+  
   console.log("Nemesis QR Hub loaded successfully.");
 
   /* =========================
