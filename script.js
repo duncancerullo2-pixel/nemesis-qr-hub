@@ -343,9 +343,10 @@ adminStatus.textContent =
         error
       );
 
-      customerList.innerHTML =
-        "<p>Unable to load customers.</p>";
-
+    customerList.innerHTML =
+  "<p>Unable to load customers: " +
+  error.message +
+  "</p>";
       return;
     }
 
@@ -462,8 +463,9 @@ adminStatus.textContent =
 
 
         if (customerMessage) {
-          customerMessage.textContent =
-            "✓ Customer saved successfully.";
+        customerMessage.textContent =
+  "✗ Unable to save customer: " +
+  error.message;
         }
 
 
