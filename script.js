@@ -993,7 +993,7 @@ async function loadServices() {
       customer_id,
       name,
       description,
-      "Price",
+      price,
       image_url,
       sort_order,
       active
@@ -1163,8 +1163,8 @@ if (serviceForm) {
           description:
             serviceDescription,
 
-          "Price":
-            Number(servicePrice),
+          price:
+  Number(servicePrice),
 
           image_url:
             serviceImageUrl,
