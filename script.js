@@ -1254,7 +1254,11 @@ if (
 
 /* LOAD SERVICES CUSTOMERS */
 
-await loadServiceCustomers();
+if (serviceCustomer) {
+
+  await loadServiceCustomers();
+
+}
 
 
 /* LOAD BUSINESS PROFILE LIST */
