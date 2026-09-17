@@ -528,6 +528,85 @@ adminStatus.textContent =
       "business-profile-list"
     );
 
+  /* LOAD CUSTOMERS INTO BUSINESS PROFILE SELECT */
+
+  async function loadProfileCustomers() {
+
+    if (!profileCustomer) {
+      return;
+    }
+
+    const {
+      data: customers,
+      error
+    } = await supabase
+      .from("customers")
+      .select("id, name, customer_code")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+
+      console.error(
+        "Profile customer loading failed:",
+        error
+      );
+
+      return;
+    }
+
+    profileCustomer.innerHTML =
+      '<option value="">Select a customer</option>';
+
+    customers.forEach(function(customer) {
+
+      const option =
+        document.createElement("option");
+
+      option.value = customer.id;
+
+      option.textContent =
+        customer.name +
+        " (" +
+        customer.customer_code +
+        ")";
+
+      profileCustomer.appendChild(option);
+
+    });
+
+  }
+
+
+  /* SHOW BUSINESS PROFILE FORM */
+
+  if (
+    profileCustomer &&
+    businessProfileFormContainer
+  ) {
+
+    profileCustomer.addEventListener(
+      "change",
+      function() {
+
+        if (profileCustomer.value) {
+
+          businessProfileFormContainer.hidden =
+            false;
+
+        } else {
+
+          businessProfileFormContainer.hidden =
+            true;
+
+        }
+
+      }
+    );
+
+  }
+
+
+  await loadProfileCustomers();
 
   /* LOAD BUSINESS PROFILES */
 
