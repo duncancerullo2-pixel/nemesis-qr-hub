@@ -496,6 +496,291 @@ adminStatus.textContent =
 
 
   /* LOAD CUSTOMER LIST */
+  /* =========================
+     BUSINESS PROFILE MANAGEMENT
+     ========================= */
+
+  const profileCustomer =
+    document.getElementById("profile-customer");
+
+  const businessProfileFormContainer =
+    document.getElementById(
+      "business-profile-form-container"
+    );
+
+  const businessProfileForm =
+    document.getElementById(
+      "business-profile-form"
+    );
+
+  const cancelBusinessProfileButton =
+    document.getElementById(
+      "cancel-business-profile-button"
+    );
+
+  const businessProfileMessage =
+    document.getElementById(
+      "business-profile-message"
+    );
+
+  const businessProfileList =
+    document.getElementById(
+      "business-profile-list"
+    );
+
+
+  /* LOAD BUSINESS PROFILES */
+
+  async function loadBusinessProfiles() {
+
+    if (!businessProfileList) {
+      return;
+    }
+
+    businessProfileList.innerHTML =
+      "<p>Loading business profiles...</p>";
+
+    const {
+      data: profiles,
+      error
+    } = await supabase
+      .from("business_profiles")
+      .select(`
+        id,
+        customer_id,
+        category,
+        description,
+        logo_url,
+        phone,
+        whatsapp,
+        email,
+        address,
+        location_url,
+        website_url,
+        opening_hour,
+        created_at
+      `)
+      .order(
+        "created_at",
+        { ascending: false }
+      );
+
+    if (error) {
+
+      console.error(
+        "Business profile loading failed:",
+        error
+      );
+
+      businessProfileList.innerHTML =
+        "<p>Unable to load business profiles: " +
+        error.message +
+        "</p>";
+
+      return;
+    }
+
+    if (!profiles || profiles.length === 0) {
+
+      businessProfileList.innerHTML =
+        "<p>No business profiles yet.</p>";
+
+      return;
+    }
+
+    businessProfileList.innerHTML = "";
+
+    profiles.forEach(function(profile) {
+
+      const profileCard =
+        document.createElement("div");
+
+      profileCard.className =
+        "customer-item";
+
+      profileCard.innerHTML = `
+        <strong>${profile.category || "Business"}</strong>
+        <span>${profile.description || ""}</span>
+        <span>Phone: ${profile.phone || "Not provided"}</span>
+        <span>WhatsApp: ${profile.whatsapp || "Not provided"}</span>
+        <span>Email: ${profile.email || "Not provided"}</span>
+        <span>Address: ${profile.address || "Not provided"}</span>
+        <span>Opening: ${profile.opening_hour || "Not provided"}</span>
+      `;
+
+      businessProfileList.appendChild(
+        profileCard
+      );
+
+    });
+
+  }
+
+
+  /* CANCEL BUSINESS PROFILE FORM */
+
+  if (
+    cancelBusinessProfileButton &&
+    businessProfileFormContainer
+  ) {
+
+    cancelBusinessProfileButton.addEventListener(
+      "click",
+      function() {
+
+        businessProfileFormContainer.hidden =
+          true;
+
+        if (businessProfileMessage) {
+          businessProfileMessage.textContent =
+            "";
+        }
+
+      }
+    );
+
+  }
+
+
+  /* SAVE BUSINESS PROFILE */
+
+  if (businessProfileForm) {
+
+    businessProfileForm.addEventListener(
+      "submit",
+      async function(event) {
+
+        event.preventDefault();
+
+        const customerId =
+          profileCustomer.value;
+
+        const category =
+          document.getElementById(
+            "profile-category"
+          ).value.trim();
+
+        const description =
+          document.getElementById(
+            "profile-description"
+          ).value.trim();
+
+        const logoUrl =
+          document.getElementById(
+            "profile-logo-url"
+          ).value.trim();
+
+        const phone =
+          document.getElementById(
+            "profile-phone"
+          ).value.trim();
+
+        const whatsapp =
+          document.getElementById(
+            "profile-whatsapp"
+          ).value.trim();
+
+        const email =
+          document.getElementById(
+            "profile-email"
+          ).value.trim();
+
+        const address =
+          document.getElementById(
+            "profile-address"
+          ).value.trim();
+
+        const locationUrl =
+          document.getElementById(
+            "profile-location-url"
+          ).value.trim();
+
+        const websiteUrl =
+          document.getElementById(
+            "profile-website-url"
+          ).value.trim();
+
+        const openingHour =
+          document.getElementById(
+            "profile-opening-hour"
+          ).value.trim();
+
+
+        if (!customerId || !category) {
+
+          if (businessProfileMessage) {
+            businessProfileMessage.textContent =
+              "Please select a customer and enter a category.";
+          }
+
+          return;
+        }
+
+
+        if (businessProfileMessage) {
+          businessProfileMessage.textContent =
+            "Saving business profile...";
+        }
+
+
+        const {
+          error
+        } = await supabase
+          .from("business_profiles")
+          .insert({
+
+            customer_id: customerId,
+            category: category,
+            description: description,
+            logo_url: logoUrl,
+            phone: phone,
+            whatsapp: whatsapp,
+            email: email,
+            address: address,
+            location_url: locationUrl,
+            website_url: websiteUrl,
+            opening_hour: openingHour
+
+          });
+
+
+        if (error) {
+
+          console.error(
+            "Business profile save failed:",
+            error
+          );
+
+          if (businessProfileMessage) {
+            businessProfileMessage.textContent =
+              "✗ Unable to save business profile: " +
+              error.message;
+          }
+
+          return;
+        }
+
+
+        if (businessProfileMessage) {
+          businessProfileMessage.textContent =
+            "✓ Business profile saved successfully.";
+        }
+
+
+        businessProfileForm.reset();
+
+        await loadBusinessProfiles();
+
+      }
+    );
+
+  }
+
+
+  /* LOAD BUSINESS PROFILE LIST */
+
+  await loadBusinessProfiles();
+
 
   await loadCustomers();
 }
