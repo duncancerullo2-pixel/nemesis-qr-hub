@@ -289,11 +289,116 @@
   </div>
     </div>
 
-      <div class="dashboard-card">
-        <h2>Services & Links</h2>
-        <p>Manage services, products and contact links.</p>
-        <span>Coming next</span>
-      </div>
+  <div class="dashboard-card">
+
+  <h2>Services</h2>
+
+  <p>Manage customer services and products.</p>
+
+  <label for="service-customer">
+    Select Customer
+  </label>
+
+  <select id="service-customer">
+    <option value="">Select a customer</option>
+  </select>
+
+  <div
+    id="service-form-container"
+    hidden
+  >
+
+    <h3>Service Information</h3>
+
+    <form id="service-form">
+
+      <label for="service-name">
+        Service Name
+      </label>
+
+      <input
+        type="text"
+        id="service-name"
+        placeholder="e.g. Roofing Materials"
+      >
+
+      <label for="service-description">
+        Description
+      </label>
+
+      <textarea
+        id="service-description"
+        placeholder="Describe the service"
+      ></textarea>
+
+      <label for="service-price">
+        Price
+      </label>
+
+      <input
+        type="number"
+        id="service-price"
+        placeholder="e.g. 2500"
+        step="0.01"
+        min="0"
+      >
+
+      <label for="service-image-url">
+        Image URL
+      </label>
+
+      <input
+        type="url"
+        id="service-image-url"
+        placeholder="https://..."
+      >
+
+      <label for="service-sort-order">
+        Display Order
+      </label>
+
+      <input
+        type="number"
+        id="service-sort-order"
+        value="0"
+        min="0"
+      >
+
+      <label for="service-active">
+        Status
+      </label>
+
+      <select id="service-active">
+        <option value="true">Active</option>
+        <option value="false">Inactive</option>
+      </select>
+
+      <button
+        type="submit"
+        class="button"
+      >
+        Save Service
+      </button>
+
+      <button
+        type="button"
+        id="cancel-service-button"
+        class="button secondary-button"
+      >
+        Cancel
+      </button>
+
+    </form>
+
+    <p id="service-message"></p>
+
+  </div>
+
+  <div id="service-list">
+    <p>Select a customer to manage their services.</p>
+  </div>
+
+  </div>
 
       <div class="dashboard-card">
         <h2>QR Destinations</h2>
