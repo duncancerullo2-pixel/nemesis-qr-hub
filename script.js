@@ -462,11 +462,10 @@ adminStatus.textContent =
         }
 
 
-        if (customerMessage) {
-        customerMessage.textContent =
-  "✗ Unable to save customer: " +
-  error.message;
-        }
+      if (customerMessage) {
+  customerMessage.textContent =
+    "✓ Customer saved successfully.";
+      }
 
 
         customerForm.reset();
