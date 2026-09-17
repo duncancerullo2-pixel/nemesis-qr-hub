@@ -855,7 +855,414 @@ adminStatus.textContent =
 
   }
 
+/* LOAD SERVICES */
 
+const serviceCustomer =
+  document.getElementById("service-customer");
+
+const serviceFormContainer =
+  document.getElementById("service-form-container");
+
+const serviceForm =
+  document.getElementById("service-form");
+
+const cancelServiceButton =
+  document.getElementById("cancel-service-button");
+
+const serviceMessage =
+  document.getElementById("service-message");
+
+const serviceList =
+  document.getElementById("service-list");
+
+
+/* LOAD CUSTOMERS INTO SERVICES SELECT */
+
+async function loadServiceCustomers() {
+
+  if (!serviceCustomer) {
+    return;
+  }
+
+  const {
+    data: customers,
+    error
+  } = await supabase
+    .from("customers")
+    .select("id, name, customer_code")
+    .order(
+      "created_at",
+      { ascending: false }
+    );
+
+  if (error) {
+
+    console.error(
+      "Service customer loading failed:",
+      error
+    );
+
+    return;
+  }
+
+  serviceCustomer.innerHTML =
+    '<option value="">Select a customer</option>';
+
+  customers.forEach(function(customer) {
+
+    const option =
+      document.createElement("option");
+
+    option.value = customer.id;
+
+    option.textContent =
+      customer.name +
+      " (" +
+      customer.customer_code +
+      ")";
+
+    serviceCustomer.appendChild(option);
+
+  });
+
+}
+
+
+/* SHOW SERVICE FORM */
+
+if (
+  serviceCustomer &&
+  serviceFormContainer
+) {
+
+  serviceCustomer.addEventListener(
+    "change",
+    function() {
+
+      if (serviceCustomer.value) {
+
+        serviceFormContainer.hidden =
+          false;
+
+        loadServices();
+
+      } else {
+
+        serviceFormContainer.hidden =
+          true;
+
+        if (serviceList) {
+
+          serviceList.innerHTML =
+            "<p>Select a customer to manage their services.</p>";
+
+        }
+
+      }
+
+    }
+  );
+
+}
+
+
+/* LOAD SERVICES */
+
+async function loadServices() {
+
+  if (
+    !serviceCustomer ||
+    !serviceList ||
+    !serviceCustomer.value
+  ) {
+
+    return;
+
+  }
+
+  serviceList.innerHTML =
+    "<p>Loading services...</p>";
+
+  const {
+    data: services,
+    error
+  } = await supabase
+    .from("services")
+    .select(`
+      id,
+      "Customer_id",
+      name,
+      description,
+      "Price",
+      image_url,
+      sort_order,
+      active
+    `)
+    .eq(
+      "Customer_id",
+      serviceCustomer.value
+    )
+    .order(
+      "sort_order",
+      { ascending: true }
+    );
+
+  if (error) {
+
+    console.error(
+      "Services loading failed:",
+      error
+    );
+
+    serviceList.innerHTML =
+      "<p>Unable to load services: " +
+      error.message +
+      "</p>";
+
+    return;
+  }
+
+  if (!services || services.length === 0) {
+
+    serviceList.innerHTML =
+      "<p>No services added for this customer yet.</p>";
+
+    return;
+
+  }
+
+  serviceList.innerHTML = "";
+
+  services.forEach(function(service) {
+
+    const serviceCard =
+      document.createElement("div");
+
+    serviceCard.className =
+      "customer-item";
+
+    serviceCard.innerHTML = `
+      <strong>${service.name || "Unnamed Service"}</strong>
+      <span>${service.description || ""}</span>
+      <span>Price: ${service.Price ?? "Not provided"}</span>
+      <span>Status: ${
+        service.active ? "Active" : "Inactive"
+      }</span>
+      <span>Display Order: ${
+        service.sort_order ?? 0
+      }</span>
+    `;
+
+    serviceList.appendChild(
+      serviceCard
+    );
+
+  });
+
+}
+
+
+/* SAVE SERVICE */
+
+if (serviceForm) {
+
+  serviceForm.addEventListener(
+    "submit",
+    async function(event) {
+
+      event.preventDefault();
+
+      const customerId =
+        serviceCustomer.value;
+
+      const serviceName =
+        document.getElementById(
+          "service-name"
+        ).value.trim();
+
+      const serviceDescription =
+        document.getElementById(
+          "service-description"
+        ).value.trim();
+
+      const servicePrice =
+        document.getElementById(
+          "service-price"
+        ).value;
+
+      const serviceImageUrl =
+        document.getElementById(
+          "service-image-url"
+        ).value.trim();
+
+      const serviceSortOrder =
+        document.getElementById(
+          "service-sort-order"
+        ).value;
+
+      const serviceActive =
+        document.getElementById(
+          "service-active"
+        ).value === "true";
+
+
+      if (
+        !customerId ||
+        !serviceName
+      ) {
+
+        if (serviceMessage) {
+
+          serviceMessage.textContent =
+            "Please select a customer and enter a service name.";
+
+        }
+
+        return;
+
+      }
+
+
+      if (
+        servicePrice === "" ||
+        Number(servicePrice) < 0
+      ) {
+
+        if (serviceMessage) {
+
+          serviceMessage.textContent =
+            "Please enter a valid price.";
+
+        }
+
+        return;
+
+      }
+
+
+      if (serviceMessage) {
+
+        serviceMessage.textContent =
+          "Saving service...";
+
+      }
+
+
+      const {
+        error
+      } = await supabase
+        .from("services")
+        .insert({
+
+          "Customer_id":
+            customerId,
+
+          name:
+            serviceName,
+
+          description:
+            serviceDescription,
+
+          "Price":
+            Number(servicePrice),
+
+          image_url:
+            serviceImageUrl,
+
+          sort_order:
+            Number(serviceSortOrder || 0),
+
+          active:
+            serviceActive
+
+        });
+
+
+      if (error) {
+
+        console.error(
+          "Service save failed:",
+          error
+        );
+
+        if (serviceMessage) {
+
+          serviceMessage.textContent =
+            "✗ Unable to save service: " +
+            error.message;
+
+        }
+
+        return;
+
+      }
+
+
+      if (serviceMessage) {
+
+        serviceMessage.textContent =
+          "✓ Service saved successfully.";
+
+      }
+
+
+      serviceForm.reset();
+
+      document.getElementById(
+        "service-sort-order"
+      ).value = "0";
+
+      document.getElementById(
+        "service-active"
+      ).value = "true";
+
+
+      await loadServices();
+
+    }
+  );
+
+}
+
+
+/* CANCEL SERVICE FORM */
+
+if (
+  cancelServiceButton &&
+  serviceFormContainer
+) {
+
+  cancelServiceButton.addEventListener(
+    "click",
+    function() {
+
+      serviceFormContainer.hidden =
+        true;
+
+      if (serviceMessage) {
+
+        serviceMessage.textContent =
+          "";
+
+      }
+
+    }
+  );
+
+}
+
+
+/* LOAD SERVICES CUSTOMERS */
+
+await loadServiceCustomers();
+
+
+/* LOAD BUSINESS PROFILE LIST */
+
+await loadBusinessProfiles();
+
+
+await loadCustomers();p
   /* LOAD BUSINESS PROFILE LIST */
 
   await loadBusinessProfiles();
