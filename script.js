@@ -990,7 +990,7 @@ async function loadServices() {
     .from("services")
     .select(`
       id,
-      "Customer_id",
+      customer_id,
       name,
       description,
       "Price",
@@ -999,7 +999,7 @@ async function loadServices() {
       active
     `)
     .eq(
-      "Customer_id",
+      "customer_id",
       serviceCustomer.value
     )
     .order(
@@ -1154,8 +1154,8 @@ if (serviceForm) {
         .from("services")
         .insert({
 
-          "Customer_id":
-            customerId,
+      customer_id:
+  customerId,
 
           name:
             serviceName,
