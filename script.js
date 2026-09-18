@@ -1258,21 +1258,24 @@ if (serviceCustomer) {
 
   await loadServiceCustomers();
 
-}
+  if (serviceCustomer.options.length > 1) {
 
+    serviceCustomer.selectedIndex = 1;
+
+    serviceFormContainer.hidden = false;
+
+    await loadServices();
+
+  }
+
+}
 
 /* LOAD BUSINESS PROFILE LIST */
 
 await loadBusinessProfiles();
 
+await loadCustomers();
 
-await loadCustomers();p
-  /* LOAD BUSINESS PROFILE LIST */
-
-  await loadBusinessProfiles();
-
-
-  await loadCustomers();
 }
 
 
