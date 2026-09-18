@@ -1044,7 +1044,7 @@ async function loadServices() {
     serviceCard.innerHTML = `
       <strong>${service.name || "Unnamed Service"}</strong>
       <span>${service.description || ""}</span>
-      <span>Price: ${service.Price ?? "Not provided"}</span>
+      <span>Price: ${service.price ?? "Not provided"}</span>
       <span>Status: ${
         service.active ? "Active" : "Inactive"
       }</span>
