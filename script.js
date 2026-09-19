@@ -1372,48 +1372,38 @@ async function loadDestinationCustomers() {
     return;
   }
 
-  const {
-    data: customers,
-    error
-  } = await supabase
-    .from("customers")
-    .select("id, name, customer_code")
-    .order(
-      "created_at",
-      { ascending: false }
-    );
-
-  if (error) {
-
-    console.error(
-      "Destination customer loading failed:",
-      error
-    );
-
-    return;
-  }
-
   destinationCustomer.innerHTML =
     '<option value="">Select a customer</option>';
 
-  customers.forEach(function(customer) {
+  if (
+    serviceCustomer &&
+    serviceCustomer.options.length > 1
+  ) {
 
-    const option =
-      document.createElement("option");
+    Array.from(
+      serviceCustomer.options
+    ).forEach(function(option, index) {
 
-    option.value = customer.id;
+      if (index === 0) {
+        return;
+      }
 
-    option.textContent =
-      customer.name +
-      " (" +
-      customer.customer_code +
-      ")";
+      const destinationOption =
+        document.createElement("option");
 
-    destinationCustomer.appendChild(
-      option
-    );
+      destinationOption.value =
+        option.value;
 
-  });
+      destinationOption.textContent =
+        option.textContent;
+
+      destinationCustomer.appendChild(
+        destinationOption
+      );
+
+    });
+
+  }
 
 }
 
