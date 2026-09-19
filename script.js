@@ -1335,7 +1335,377 @@ if (serviceCustomer) {
   }
 
 }
+/* =========================
+   QR DESTINATION MANAGEMENT
+   ========================= */
 
+const destinationCustomer =
+  document.getElementById("destination-customer");
+
+const destinationFormContainer =
+  document.getElementById(
+    "destination-form-container"
+  );
+
+const destinationForm =
+  document.getElementById("destination-form");
+
+const cancelDestinationButton =
+  document.getElementById(
+    "cancel-destination-button"
+  );
+
+const destinationMessage =
+  document.getElementById(
+    "destination-message"
+  );
+
+const destinationList =
+  document.getElementById("destination-list");
+
+
+/* LOAD CUSTOMERS INTO DESTINATION SELECT */
+
+async function loadDestinationCustomers() {
+
+  if (!destinationCustomer) {
+    return;
+  }
+
+  const {
+    data: customers,
+    error
+  } = await supabase
+    .from("customers")
+    .select("id, name, customer_code")
+    .order(
+      "created_at",
+      { ascending: false }
+    );
+
+  if (error) {
+
+    console.error(
+      "Destination customer loading failed:",
+      error
+    );
+
+    return;
+  }
+
+  destinationCustomer.innerHTML =
+    '<option value="">Select a customer</option>';
+
+  customers.forEach(function(customer) {
+
+    const option =
+      document.createElement("option");
+
+    option.value = customer.id;
+
+    option.textContent =
+      customer.name +
+      " (" +
+      customer.customer_code +
+      ")";
+
+    destinationCustomer.appendChild(
+      option
+    );
+
+  });
+
+}
+
+
+/* LOAD DESTINATIONS */
+
+async function loadDestinations() {
+
+  if (
+    !destinationCustomer ||
+    !destinationList ||
+    !destinationCustomer.value
+  ) {
+    return;
+  }
+
+  destinationList.innerHTML =
+    "<p>Loading destinations...</p>";
+
+  const {
+    data: destinations,
+    error
+  } = await supabase
+    .from("qr_destinations")
+    .select(`
+      id,
+      customer_id,
+      slug,
+      destination_type,
+      status,
+      created_at
+    `)
+    .eq(
+      "customer_id",
+      destinationCustomer.value
+    )
+    .order(
+      "created_at",
+      { ascending: false }
+    );
+
+  if (error) {
+
+    console.error(
+      "Destination loading failed:",
+      error
+    );
+
+    destinationList.innerHTML =
+      "<p>Unable to load destinations: " +
+      error.message +
+      "</p>";
+
+    return;
+  }
+
+  if (
+    !destinations ||
+    destinations.length === 0
+  ) {
+
+    destinationList.innerHTML =
+      "<p>No QR destinations added for this customer yet.</p>";
+
+    return;
+  }
+
+  destinationList.innerHTML = "";
+
+  destinations.forEach(
+    function(destination) {
+
+      const destinationCard =
+        document.createElement("div");
+
+      destinationCard.className =
+        "customer-item";
+
+      destinationCard.innerHTML = `
+        <strong>${destination.slug}</strong>
+        <span>Type: ${
+          destination.destination_type
+        }</span>
+        <span>Status: ${
+          destination.status
+        }</span>
+      `;
+
+      destinationList.appendChild(
+        destinationCard
+      );
+
+    }
+  );
+
+}
+
+
+/* SHOW DESTINATION FORM */
+
+if (
+  destinationCustomer &&
+  destinationFormContainer
+) {
+
+  destinationCustomer.addEventListener(
+    "change",
+    function() {
+
+      if (destinationCustomer.value) {
+
+        destinationFormContainer.hidden =
+          false;
+
+        loadDestinations();
+
+      } else {
+
+        destinationFormContainer.hidden =
+          true;
+
+        if (destinationList) {
+
+          destinationList.innerHTML =
+            "<p>Select a customer to manage QR destinations.</p>";
+
+        }
+
+      }
+
+    }
+  );
+
+}
+
+
+/* SAVE DESTINATION */
+
+if (destinationForm) {
+
+  destinationForm.addEventListener(
+    "submit",
+    async function(event) {
+
+      event.preventDefault();
+
+      const customerId =
+        destinationCustomer.value;
+
+      const slug =
+        document.getElementById(
+          "destination-slug"
+        ).value.trim().toLowerCase();
+
+      const destinationType =
+        document.getElementById(
+          "destination-type"
+        ).value;
+
+      const status =
+        document.getElementById(
+          "destination-status"
+        ).value;
+
+
+      if (
+        !customerId ||
+        !slug
+      ) {
+
+        if (destinationMessage) {
+
+          destinationMessage.textContent =
+            "Please select a customer and enter a destination slug.";
+
+        }
+
+        return;
+
+      }
+
+
+      if (destinationMessage) {
+
+        destinationMessage.textContent =
+          "Saving destination...";
+
+      }
+
+
+      const {
+        error
+      } = await supabase
+        .from("qr_destinations")
+        .insert({
+
+          customer_id:
+            customerId,
+
+          slug:
+            slug,
+
+          destination_type:
+            destinationType,
+
+          status:
+            status
+
+        });
+
+
+      if (error) {
+
+        console.error(
+          "Destination save failed:",
+          error
+        );
+
+        if (destinationMessage) {
+
+          destinationMessage.textContent =
+            "✗ Unable to save destination: " +
+            error.message;
+
+        }
+
+        return;
+
+      }
+
+
+      if (destinationMessage) {
+
+        destinationMessage.textContent =
+          "✓ QR destination saved successfully.";
+
+      }
+
+
+      destinationForm.reset();
+
+      document.getElementById(
+        "destination-type"
+      ).value = "business";
+
+      document.getElementById(
+        "destination-status"
+      ).value = "active";
+
+
+      await loadDestinations();
+
+    }
+  );
+
+}
+
+
+/* CANCEL DESTINATION FORM */
+
+if (
+  cancelDestinationButton &&
+  destinationFormContainer
+) {
+
+  cancelDestinationButton.addEventListener(
+    "click",
+    function() {
+
+      destinationFormContainer.hidden =
+        true;
+
+      if (destinationMessage) {
+
+        destinationMessage.textContent =
+          "";
+
+      }
+
+    }
+  );
+
+}
+
+
+/* LOAD DESTINATION CUSTOMERS */
+
+if (destinationCustomer) {
+
+  await loadDestinationCustomers();
+
+    }
 /* LOAD BUSINESS PROFILE LIST */
 
 await loadBusinessProfiles();
