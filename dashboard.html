@@ -401,9 +401,95 @@
   </div>
 
       <div class="dashboard-card">
-        <h2>QR Destinations</h2>
-        <p>Manage dynamic QR destinations.</p>
-        <span>Coming next</span>
+
+  <h2>QR Destinations</h2>
+
+  <p>Manage dynamic QR destinations.</p>
+
+  <label for="destination-customer">
+    Select Customer
+  </label>
+
+  <select id="destination-customer">
+    <option value="">Select a customer</option>
+  </select>
+
+  <div
+    id="destination-form-container"
+    hidden
+  >
+
+    <h3>Destination Information</h3>
+
+    <form id="destination-form">
+
+      <label for="destination-slug">
+        Destination Slug
+      </label>
+
+      <input
+        type="text"
+        id="destination-slug"
+        placeholder="e.g. easygo-hardware"
+      >
+
+      <label for="destination-type">
+        Destination Type
+      </label>
+
+      <select id="destination-type">
+
+        <option value="business">
+          Business
+        </option>
+
+        <option value="personal">
+          Personal
+        </option>
+
+      </select>
+
+      <label for="destination-status">
+        Status
+      </label>
+
+      <select id="destination-status">
+
+        <option value="active">
+          Active
+        </option>
+
+        <option value="inactive">
+          Inactive
+        </option>
+
+      </select>
+
+      <button
+        type="submit"
+        class="button"
+      >
+        Save Destination
+      </button>
+
+      <button
+        type="button"
+        id="cancel-destination-button"
+        class="button secondary-button"
+      >
+        Cancel
+      </button>
+
+    </form>
+
+    <p id="destination-message"></p>
+
+  </div>
+
+  <div id="destination-list">
+    <p>Select a customer to manage QR destinations.</p>
+  </div>
+
       </div>
 
       <div class="dashboard-card">
