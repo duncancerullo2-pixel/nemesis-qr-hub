@@ -1035,29 +1035,95 @@ async function loadServices() {
 
   services.forEach(function(service) {
 
-    const serviceCard =
-      document.createElement("div");
+  const serviceCard =
+    document.createElement("div");
 
-    serviceCard.className =
-      "customer-item";
+  serviceCard.className =
+    "customer-item";
 
-    serviceCard.innerHTML = `
-      <strong>${service.name || "Unnamed Service"}</strong>
-      <span>${service.description || ""}</span>
-      <span>Price: ${service.price ?? "Not provided"}</span>
-      <span>Status: ${
-        service.active ? "Active" : "Inactive"
-      }</span>
-      <span>Display Order: ${
-        service.sort_order ?? 0
-      }</span>
-    `;
+  serviceCard.innerHTML = `
+    <strong>${service.name || "Unnamed Service"}</strong>
+    <span>${service.description || ""}</span>
+    <span>Price: ${service.price ?? "Not provided"}</span>
+    <span>Status: ${
+      service.active ? "Active" : "Inactive"
+    }</span>
+    <span>Display Order: ${
+      service.sort_order ?? 0
+    }</span>
+  `;
 
-    serviceList.appendChild(
-      serviceCard
-    );
+  const deleteButton =
+    document.createElement("button");
 
-  });
+  deleteButton.type = "button";
+
+  deleteButton.className =
+    "button secondary-button";
+
+  deleteButton.textContent =
+    "Delete Service";
+
+  deleteButton.addEventListener(
+    "click",
+    async function() {
+
+      const confirmed =
+        confirm(
+          "Delete this service?\n\n" +
+          service.name
+        );
+
+      if (!confirmed) {
+        return;
+      }
+
+      deleteButton.disabled = true;
+
+      deleteButton.textContent =
+        "Deleting...";
+
+      const {
+        error
+      } = await supabase
+        .from("services")
+        .delete()
+        .eq("id", service.id);
+
+      if (error) {
+
+        console.error(
+          "Service deletion failed:",
+          error
+        );
+
+        alert(
+          "Unable to delete service: " +
+          error.message
+        );
+
+        deleteButton.disabled = false;
+
+        deleteButton.textContent =
+          "Delete Service";
+
+        return;
+      }
+
+      await loadServices();
+
+    }
+  );
+
+  serviceCard.appendChild(
+    deleteButton
+  );
+
+  serviceList.appendChild(
+    serviceCard
+  );
+
+});
 
 }
 
