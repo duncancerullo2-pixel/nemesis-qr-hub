@@ -490,12 +490,69 @@
     <p>Select a customer to manage QR destinations.</p>
   </div>
 
-      </div>
-
       <div class="dashboard-card">
-        <h2>QR Codes</h2>
-        <p>Manage generated QR codes.</p>
-        <span>Coming next</span>
+
+  <h2>QR Codes</h2>
+
+  <p>Manage QR code records linked to QR destinations.</p>
+
+  <label for="qr-code-destination">
+    Select QR Destination
+  </label>
+
+  <select id="qr-code-destination">
+    <option value="">Select a QR destination</option>
+  </select>
+
+  <div id="qr-code-form-container" hidden>
+
+    <h3>QR Code Information</h3>
+
+    <form id="qr-code-form">
+
+      <label for="qr-code-format">
+        QR Format
+      </label>
+
+      <select id="qr-code-format" required>
+        <option value="png">PNG</option>
+        <option value="svg">SVG</option>
+      </select>
+
+      <label for="qr-code-status">
+        Status
+      </label>
+
+      <select id="qr-code-status" required>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+
+      <button
+        type="submit"
+        class="button"
+      >
+        Save QR Code
+      </button>
+
+      <button
+        type="button"
+        id="cancel-qr-code-button"
+        class="button secondary-button"
+      >
+        Cancel
+      </button>
+
+    </form>
+
+    <p id="qr-code-message"></p>
+
+  </div>
+
+  <div id="qr-code-list">
+    <p>Select a QR destination to manage QR codes.</p>
+  </div>
+
       </div>
 
     </section>
