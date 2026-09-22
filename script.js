@@ -1696,6 +1696,364 @@ if (destinationCustomer) {
   await loadDestinationCustomers();
 
     }
+  /* =========================
+   QR CODE MANAGEMENT
+   ========================= */
+
+const qrCodeDestination =
+  document.getElementById("qr-code-destination");
+
+const qrCodeFormContainer =
+  document.getElementById("qr-code-form-container");
+
+const qrCodeForm =
+  document.getElementById("qr-code-form");
+
+const cancelQrCodeButton =
+  document.getElementById("cancel-qr-code-button");
+
+const qrCodeMessage =
+  document.getElementById("qr-code-message");
+
+const qrCodeList =
+  document.getElementById("qr-code-list");
+
+
+/* LOAD QR DESTINATIONS */
+
+async function loadQrCodeDestinations() {
+
+  if (!qrCodeDestination) {
+    return;
+  }
+
+  qrCodeDestination.innerHTML =
+    '<option value="">Select a QR destination</option>';
+
+  const {
+    data: destinations,
+    error
+  } = await supabase
+    .from("qr_destinations")
+    .select(
+      "id, customer_id, slug, destination_type, status"
+    )
+    .order(
+      "slug",
+      { ascending: true }
+    );
+
+  if (error) {
+
+    console.error(
+      "QR destination loading failed:",
+      error
+    );
+
+    return;
+  }
+
+  if (!destinations) {
+    return;
+  }
+
+  destinations.forEach(
+    function(destination) {
+
+      const option =
+        document.createElement("option");
+
+      option.value =
+        destination.id;
+
+      option.textContent =
+        destination.slug +
+        " (" +
+        destination.destination_type +
+        ", " +
+        destination.status +
+        ")";
+
+      qrCodeDestination.appendChild(
+        option
+      );
+
+    }
+  );
+
+}
+
+
+/* LOAD QR CODES */
+
+async function loadQrCodes() {
+
+  if (
+    !qrCodeDestination ||
+    !qrCodeList ||
+    !qrCodeDestination.value
+  ) {
+    return;
+  }
+
+  qrCodeList.innerHTML =
+    "<p>Loading QR codes...</p>";
+
+  const {
+    data: qrCodes,
+    error
+  } = await supabase
+    .from("qr_codes")
+    .select(
+      "id, destination_id, qr_format, file_url, status, created_at, updated_at"
+    )
+    .eq(
+      "destination_id",
+      qrCodeDestination.value
+    )
+    .order(
+      "created_at",
+      { ascending: false }
+    );
+
+  if (error) {
+
+    console.error(
+      "QR code loading failed:",
+      error
+    );
+
+    qrCodeList.innerHTML =
+      "<p>Unable to load QR codes: " +
+      error.message +
+      "</p>";
+
+    return;
+  }
+
+  if (
+    !qrCodes ||
+    qrCodes.length === 0
+  ) {
+
+    qrCodeList.innerHTML =
+      "<p>No QR codes created for this destination yet.</p>";
+
+    return;
+  }
+
+  qrCodeList.innerHTML = "";
+
+  qrCodes.forEach(
+    function(qrCode) {
+
+      const qrCard =
+        document.createElement("div");
+
+      qrCard.className =
+        "customer-item";
+
+      qrCard.innerHTML = `
+        <strong>QR Code</strong>
+        <span>Format: ${qrCode.qr_format}</span>
+        <span>Status: ${qrCode.status}</span>
+        <span>File URL: ${qrCode.file_url || "Not generated yet"}</span>
+      `;
+
+      qrCodeList.appendChild(
+        qrCard
+      );
+
+    }
+  );
+
+}
+
+
+/* SHOW QR CODE FORM */
+
+if (
+  qrCodeDestination &&
+  qrCodeFormContainer
+) {
+
+  qrCodeDestination.addEventListener(
+    "change",
+    function() {
+
+      if (qrCodeDestination.value) {
+
+        qrCodeFormContainer.hidden =
+          false;
+
+        loadQrCodes();
+
+      } else {
+
+        qrCodeFormContainer.hidden =
+          true;
+
+        if (qrCodeList) {
+
+          qrCodeList.innerHTML =
+            "<p>Select a QR destination to manage QR codes.</p>";
+
+        }
+
+      }
+
+    }
+  );
+
+}
+
+
+/* SAVE QR CODE */
+
+if (qrCodeForm) {
+
+  qrCodeForm.addEventListener(
+    "submit",
+    async function(event) {
+
+      event.preventDefault();
+
+      const destinationId =
+        qrCodeDestination.value;
+
+      const qrFormat =
+        document.getElementById(
+          "qr-code-format"
+        ).value;
+
+      const status =
+        document.getElementById(
+          "qr-code-status"
+        ).value;
+
+
+      if (!destinationId) {
+
+        if (qrCodeMessage) {
+
+          qrCodeMessage.textContent =
+            "Please select a QR destination.";
+
+        }
+
+        return;
+
+      }
+
+
+      if (qrCodeMessage) {
+
+        qrCodeMessage.textContent =
+          "Saving QR code...";
+
+      }
+
+
+      const {
+        error
+      } = await supabase
+        .from("qr_codes")
+        .insert({
+
+          destination_id:
+            destinationId,
+
+          qr_format:
+            qrFormat,
+
+          status:
+            status
+
+        });
+
+
+      if (error) {
+
+        console.error(
+          "QR code save failed:",
+          error
+        );
+
+        if (qrCodeMessage) {
+
+          qrCodeMessage.textContent =
+            "✗ Unable to save QR code: " +
+            error.message;
+
+        }
+
+        return;
+
+      }
+
+
+      if (qrCodeMessage) {
+
+        qrCodeMessage.textContent =
+          "✓ QR code record saved successfully.";
+
+      }
+
+
+      qrCodeForm.reset();
+
+      document.getElementById(
+        "qr-code-format"
+      ).value = "png";
+
+      document.getElementById(
+        "qr-code-status"
+      ).value = "active";
+
+
+      await loadQrCodes();
+
+    }
+  );
+
+}
+
+
+/* CANCEL QR CODE FORM */
+
+if (
+  cancelQrCodeButton &&
+  qrCodeFormContainer
+) {
+
+  cancelQrCodeButton.addEventListener(
+    "click",
+    function() {
+
+      qrCodeFormContainer.hidden =
+        true;
+
+      if (qrCodeMessage) {
+
+        qrCodeMessage.textContent =
+          "";
+
+      }
+
+    }
+  );
+
+}
+
+
+/* LOAD QR CODE DESTINATIONS */
+
+if (qrCodeDestination) {
+
+  await loadQrCodeDestinations();
+
+}
+
 /* LOAD BUSINESS PROFILE LIST */
 
 await loadBusinessProfiles();
