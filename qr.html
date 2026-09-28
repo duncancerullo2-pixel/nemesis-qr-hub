@@ -24,7 +24,6 @@
       background: #070909;
       color: #ffffff;
       font-family: Arial, sans-serif;
-      text-align: center;
     }
 
     .qr-page {
@@ -37,14 +36,22 @@
       border-radius: 18px;
     }
 
-    h1 {
-      margin-bottom: 10px;
-    }
-
     .brand {
       color: #39d353;
       font-weight: bold;
+      text-align: center;
       margin-bottom: 25px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .category {
+      text-align: center;
+      color: #39d353;
+      font-weight: bold;
     }
 
     p {
@@ -53,6 +60,7 @@
     }
 
     .status {
+      text-align: center;
       margin-top: 25px;
       color: #39d353;
     }
@@ -69,17 +77,154 @@
       NEMESIS QR
     </div>
 
-    <h1>QR Destination</h1>
+    <h1 id="business-name">
+      Loading...
+    </h1>
 
-    <p>
+    <div
+      class="category"
+      id="business-category"
+    ></div>
+
+    <p id="business-description"></p>
+
+    <p id="business-location"></p>
+
+    <p id="business-hours"></p>
+
+    <p class="status" id="status-message">
       Loading business information...
     </p>
 
-    <p class="status">
-      Please wait.
-    </p>
-
   </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+
+    const SUPABASE_URL =
+      "https://oioudjbgrtvkbqhwfosw.supabase.co";
+
+    const SUPABASE_ANON_KEY =
+      "YOUR_EXISTING_ANON_KEY";
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+
+    async function loadBusiness() {
+
+      const params =
+        new URLSearchParams(
+          window.location.search
+        );
+
+      const slug =
+        params.get("slug");
+
+
+      if (!slug) {
+
+        document.getElementById(
+          "status-message"
+        ).textContent =
+          "QR destination not specified.";
+
+        return;
+
+      }
+
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient.rpc(
+          "get_public_qr_business",
+          {
+            p_slug: slug
+          }
+        );
+
+
+      if (error) {
+
+        console.error(error);
+
+        document.getElementById(
+          "status-message"
+        ).textContent =
+          "Unable to load this QR destination.";
+
+        return;
+
+      }
+
+
+      if (!data || data.length === 0) {
+
+        document.getElementById(
+          "status-message"
+        ).textContent =
+          "QR destination not found.";
+
+        return;
+
+      }
+
+
+      const business =
+        data[0];
+
+
+      document.getElementById(
+        "business-name"
+      ).textContent =
+        business.customer_name || "Business";
+
+
+      document.getElementById(
+        "business-category"
+      ).textContent =
+        business.category || "";
+
+
+      document.getElementById(
+        "business-description"
+      ).textContent =
+        business.description || "";
+
+
+      document.getElementById(
+        "business-location"
+      ).textContent =
+        business.location_url
+          ? "Location available"
+          : "";
+
+
+      document.getElementById(
+        "business-hours"
+      ).textContent =
+        business.opening_hours
+          ? business.opening_hours
+          : "";
+
+
+      document.getElementById(
+        "status-message"
+      ).textContent =
+        "Nemesis QR destination active.";
+
+    }
+
+
+    loadBusiness();
+
+  </script>
 
 </body>
 
