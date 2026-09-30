@@ -1885,10 +1885,12 @@ async function generateAndUploadQrCode(qrCodeId, destinationId) {
 
 
     const filePath =
-      destinationId +
-      "/" +
-      qrCodeId +
-      ".png";
+  destinationId +
+  "/" +
+  qrCodeId +
+  "-" +
+  Date.now() +
+  ".png";
 
 
     const {
