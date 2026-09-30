@@ -3,10 +3,12 @@
 
 <head>
   <meta charset="UTF-8">
+
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
   >
+
   <title>Nemesis QR Test</title>
 </head>
 
@@ -15,24 +17,76 @@
   <h1>Nemesis QR</h1>
 
   <p id="test">
-    Testing Supabase connection...
+    Testing public QR lookup...
   </p>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
 
-    if (typeof supabase !== "undefined") {
+    const SUPABASE_URL =
+      "https://oioudjbgrtvkbqhwfosw.supabase.co";
 
-      document.getElementById("test").textContent =
-        "Supabase library loaded successfully.";
+    const SUPABASE_ANON_KEY =
+      "sb_publishable_eEJjuP4lyJ1AI7peckWdUg_6KvCkv_j";
 
-    } else {
 
-      document.getElementById("test").textContent =
-        "Supabase library failed to load.";
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+
+    async function testQrLookup() {
+
+      const testMessage =
+        document.getElementById("test");
+
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient.rpc(
+          "get_public_qr_business",
+          {
+            p_slug: "easygo-hardware"
+          }
+        );
+
+
+      if (error) {
+
+        console.error(error);
+
+        testMessage.textContent =
+          "RPC ERROR: " +
+          error.message;
+
+        return;
+
+      }
+
+
+      if (!data || data.length === 0) {
+
+        testMessage.textContent =
+          "RPC worked, but no business was returned.";
+
+        return;
+
+      }
+
+
+      testMessage.textContent =
+        "SUCCESS: " +
+        data[0].customer_name;
 
     }
+
+
+    testQrLookup();
 
   </script>
 
