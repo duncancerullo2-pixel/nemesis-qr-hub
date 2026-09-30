@@ -29,9 +29,8 @@ async function startNemesisQR() {
 } = await supabase.auth.getSession();
 
 alert(
-  sessionData.session
-    ? "AUTHENTICATED"
-    : "NOT AUTHENTICATED"
+  "AUTHENTICATED\nUser ID: " +
+  sessionData.session.user.id
 );
 console.log("NEMESIS QR SCRIPT IS RUNNING");
   
