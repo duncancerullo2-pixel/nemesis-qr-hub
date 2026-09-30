@@ -2061,8 +2061,8 @@ async function loadQrCodes() {
   </button>
 `;
 const generateQrButton =
-  document.getElementById(
-    "generate-qr-" + qrCode.id
+  qrCard.querySelector(
+    "#generate-qr-" + qrCode.id
   );
 
 if (generateQrButton) {
