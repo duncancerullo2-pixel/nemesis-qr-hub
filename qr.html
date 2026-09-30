@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
   <meta charset="UTF-8">
 
   <meta
@@ -9,23 +10,104 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Nemesis QR Test</title>
+  <title>Nemesis QR</title>
+
+  <style>
+
+    body {
+      margin: 0;
+      padding: 30px 20px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #070909;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+    }
+
+    .qr-page {
+      width: 100%;
+      max-width: 520px;
+      padding: 30px;
+      box-sizing: border-box;
+      background: #101414;
+      border: 1px solid #222;
+      border-radius: 18px;
+    }
+
+    .brand {
+      color: #39d353;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .category {
+      text-align: center;
+      color: #39d353;
+      font-weight: bold;
+    }
+
+    p {
+      line-height: 1.6;
+      color: #d8d8d8;
+    }
+
+    .status {
+      text-align: center;
+      margin-top: 25px;
+      color: #39d353;
+    }
+
+  </style>
+
 </head>
 
 <body>
 
-  <h1>Nemesis QR</h1>
+  <main class="qr-page">
 
-  <p id="test">
-    Testing public QR lookup...
-  </p>
+    <div class="brand">
+      NEMESIS QR
+    </div>
+
+    <h1 id="business-name">
+      Loading...
+    </h1>
+
+    <div
+      class="category"
+      id="business-category"
+    ></div>
+
+    <p id="business-description"></p>
+
+    <p id="business-hours"></p>
+
+    <p
+      class="status"
+      id="status-message"
+    >
+      Loading business information...
+    </p>
+
+  </main>
+
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 
   <script>
 
     const SUPABASE_URL =
       "https://oioudjbgrtvkbqhwfosw.supabase.co";
+
 
     const SUPABASE_ANON_KEY =
       "sb_publishable_eEJjuP4lyJ1AI7peckWdUg_6KvCkv_j";
@@ -38,10 +120,28 @@
       );
 
 
-    async function testQrLookup() {
+    async function loadBusiness() {
 
-      const testMessage =
-        document.getElementById("test");
+      const params =
+        new URLSearchParams(
+          window.location.search
+        );
+
+
+      const slug =
+        params.get("slug");
+
+
+      if (!slug) {
+
+        document.getElementById(
+          "status-message"
+        ).textContent =
+          "QR destination not specified.";
+
+        return;
+
+      }
 
 
       const {
@@ -51,7 +151,7 @@
         await supabaseClient.rpc(
           "get_public_qr_business",
           {
-            p_slug: "easygo-hardware"
+            p_slug: slug
           }
         );
 
@@ -60,33 +160,74 @@
 
         console.error(error);
 
-        testMessage.textContent =
-          "RPC ERROR: " +
-          error.message;
+        document.getElementById(
+          "status-message"
+        ).textContent =
+          "Unable to load this QR destination.";
 
         return;
 
       }
 
 
-      if (!data || data.length === 0) {
+      if (
+        !data ||
+        data.length === 0
+      ) {
 
-        testMessage.textContent =
-          "RPC worked, but no business was returned.";
+        document.getElementById(
+          "status-message"
+        ).textContent =
+          "QR destination not found.";
 
         return;
 
       }
 
 
-      testMessage.textContent =
-        "SUCCESS: " +
-        data[0].customer_name;
+      const business =
+        data[0];
+
+
+      document.getElementById(
+        "business-name"
+      ).textContent =
+        business.customer_name ||
+        "Business";
+
+
+      document.getElementById(
+        "business-category"
+      ).textContent =
+        business.category ||
+        "";
+
+
+      document.getElementById(
+        "business-description"
+      ).textContent =
+        business.description ||
+        "";
+
+
+      document.getElementById(
+        "business-hours"
+      ).textContent =
+        business.opening_hours
+          ? "Opening hours: " +
+            business.opening_hours
+          : "";
+
+
+      document.getElementById(
+        "status-message"
+      ).textContent =
+        "Nemesis QR destination active.";
 
     }
 
 
-    testQrLookup();
+    loadBusiness();
 
   </script>
 
