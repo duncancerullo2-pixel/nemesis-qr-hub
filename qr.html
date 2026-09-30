@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
   <title>Nemesis QR Test</title>
 </head>
 
@@ -10,12 +14,28 @@
 
   <h1>Nemesis QR</h1>
 
-  <p id="test">QR page is loading...</p>
+  <p id="test">
+    Testing Supabase connection...
+  </p>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    document.getElementById("test").textContent =
-      "QR page JavaScript is working.";
+
+    if (typeof supabase !== "undefined") {
+
+      document.getElementById("test").textContent =
+        "Supabase library loaded successfully.";
+
+    } else {
+
+      document.getElementById("test").textContent =
+        "Supabase library failed to load.";
+
+    }
+
   </script>
 
 </body>
+
 </html>
