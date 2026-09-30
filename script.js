@@ -1909,7 +1909,7 @@ async function generateAndUploadQrCode(qrCodeId, destinationId) {
           {
             contentType:
               "image/png",
-            upsert: true
+            upsert: false
           }
         );
 
