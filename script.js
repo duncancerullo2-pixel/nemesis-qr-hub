@@ -1916,8 +1916,10 @@ async function generateAndUploadQrCode(qrCodeId, destinationId) {
 
     if (uploadError) {
   throw new Error(
-    "STORAGE UPLOAD FAILED: " +
-    uploadError.message
+    "STORAGE UPLOAD FAILED\n" +
+    "Message: " + uploadError.message + "\n" +
+    "Status: " + (uploadError.statusCode || "unknown") + "\n" +
+    "Name: " + (uploadError.name || "unknown")
   );
     }
 
