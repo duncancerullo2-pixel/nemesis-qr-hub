@@ -1783,7 +1783,200 @@ async function loadQrCodeDestinations() {
 
 }
 
+/* =========================
+   GENERATE AND UPLOAD QR CODE
+   ========================= */
 
+async function generateAndUploadQrCode(qrCodeId, destinationId) {
+
+  if (typeof QRCode === "undefined") {
+
+    alert("QR generator library is not available.");
+
+    return;
+
+  }
+
+
+  const qrTargetUrl =
+    "https://duncancerullo2-pixel.github.io/nemesis-qr-hub/qr.html?slug=easygo-hardware";
+
+
+  const qrContainer =
+    document.createElement("div");
+
+  qrContainer.style.position =
+    "fixed";
+
+  qrContainer.style.left =
+    "-10000px";
+
+  qrContainer.style.top =
+    "-10000px";
+
+  document.body.appendChild(
+    qrContainer
+  );
+
+
+  try {
+
+    new QRCode(
+      qrContainer,
+      {
+        text: qrTargetUrl,
+        width: 512,
+        height: 512,
+        correctLevel:
+          QRCode.CorrectLevel.H
+      }
+    );
+
+
+    await new Promise(
+      function(resolve) {
+        setTimeout(
+          resolve,
+          500
+        );
+      }
+    );
+
+
+    const canvas =
+      qrContainer.querySelector(
+        "canvas"
+      );
+
+
+    if (!canvas) {
+
+      throw new Error(
+        "QR image could not be generated."
+      );
+
+    }
+
+
+    const blob =
+      await new Promise(
+        function(resolve, reject) {
+
+          canvas.toBlob(
+            function(result) {
+
+              if (result) {
+                resolve(result);
+              } else {
+                reject(
+                  new Error(
+                    "Unable to create PNG file."
+                  )
+                );
+              }
+
+            },
+            "image/png"
+          );
+
+        }
+      );
+
+
+    const filePath =
+      destinationId +
+      "/" +
+      qrCodeId +
+      ".png";
+
+
+    const {
+      error: uploadError
+    } =
+      await supabase.storage
+        .from("qr-codes")
+        .upload(
+          filePath,
+          blob,
+          {
+            contentType:
+              "image/png",
+            upsert: true
+          }
+        );
+
+
+    if (uploadError) {
+
+      throw uploadError;
+
+    }
+
+
+    const {
+      data: publicUrlData
+    } =
+      supabase.storage
+        .from("qr-codes")
+        .getPublicUrl(
+          filePath
+        );
+
+
+    const publicUrl =
+      publicUrlData.publicUrl;
+
+
+    const {
+      error: updateError
+    } =
+      await supabase
+        .from("qr_codes")
+        .update({
+          file_url:
+            publicUrl
+        })
+        .eq(
+          "id",
+          qrCodeId
+        );
+
+
+    if (updateError) {
+
+      throw updateError;
+
+    }
+
+
+    alert(
+      "QR code generated and uploaded successfully."
+    );
+
+
+    await loadQrCodes();
+
+  }
+  catch (error) {
+
+    console.error(
+      "QR generation failed:",
+      error
+    );
+
+    alert(
+      "QR generation failed: " +
+      error.message
+    );
+
+  }
+  finally {
+
+    qrContainer.remove();
+
+  }
+
+}
 /* LOAD QR CODES */
 
 async function loadQrCodes() {
