@@ -1892,19 +1892,22 @@ async function generateAndUploadQrCode(qrCodeId, destinationId) {
 
 
     const {
-      error: uploadError
-    } =
-      await supabase.storage
-        .from("qr-codes")
-        .upload(
-          filePath,
-          blob,
-          {
-            contentType:
-              "image/png",
-            upsert: false
-          }
-        );
+  data: uploadData,
+  error: uploadError
+} =
+  await supabase.storage
+    .from("qr-codes")
+    .upload(
+      filePath,
+      blob,
+      {
+        contentType:
+          "image/png",
+        upsert: false
+      }
+    );
+
+console.log("UPLOAD RESULT:", uploadData, uploadError);
 
 
     if (uploadError) {
