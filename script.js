@@ -2047,12 +2047,49 @@ async function loadQrCodes() {
         "customer-item";
 
       qrCard.innerHTML = `
-        <strong>QR Code</strong>
-        <span>Format: ${qrCode.qr_format}</span>
-        <span>Status: ${qrCode.status}</span>
-        <span>File URL: ${qrCode.file_url || "Not generated yet"}</span>
-      `;
+  <strong>QR Code</strong>
+  <span>Format: ${qrCode.qr_format}</span>
+  <span>Status: ${qrCode.status}</span>
+  <span>File URL: ${qrCode.file_url || "Not generated yet"}</span>
 
+  <button
+    type="button"
+    class="button"
+    id="generate-qr-${qrCode.id}"
+  >
+    Generate QR
+  </button>
+`;
+const generateQrButton =
+  document.getElementById(
+    "generate-qr-" + qrCode.id
+  );
+
+if (generateQrButton) {
+
+  generateQrButton.addEventListener(
+    "click",
+    async function() {
+
+      generateQrButton.disabled = true;
+
+      generateQrButton.textContent =
+        "Generating...";
+
+      await generateAndUploadQrCode(
+        qrCode.id,
+        qrCode.destination_id
+      );
+
+      generateQrButton.disabled = false;
+
+      generateQrButton.textContent =
+        "Generate QR";
+
+    }
+  );
+
+    }
       qrCodeList.appendChild(
         qrCard
       );
