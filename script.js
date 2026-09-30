@@ -24,6 +24,15 @@ async function startNemesisQR() {
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY
   );
+  const {
+  data: sessionData
+} = await supabase.auth.getSession();
+
+alert(
+  sessionData.session
+    ? "AUTHENTICATED"
+    : "NOT AUTHENTICATED"
+);
 console.log("NEMESIS QR SCRIPT IS RUNNING");
   
   console.log("Nemesis QR Hub loaded successfully.");
