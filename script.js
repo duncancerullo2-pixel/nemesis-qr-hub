@@ -1953,7 +1953,10 @@ async function generateAndUploadQrCode(qrCodeId, destinationId) {
 
     if (updateError) {
 
-      throw updateError;
+  throw new Error(
+    "QR_CODES UPDATE FAILED: " +
+    updateError.message
+  );
 
     }
 
