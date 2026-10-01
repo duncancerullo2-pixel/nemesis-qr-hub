@@ -1826,8 +1826,8 @@ async function generateAndUploadQrCode(qrCodeId, destinationId) {
       qrContainer,
       {
         text: qrTargetUrl,
-        width: 512,
-        height: 512,
+        width: 300,
+        height: 300,
         correctLevel:
           QRCode.CorrectLevel.H
       }
