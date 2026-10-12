@@ -65,6 +65,32 @@
       color: #39d353;
     }
 
+.business-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.business-actions a {
+  display: block;
+  padding: 14px 18px;
+  border-radius: 10px;
+  background: #176b4d;
+  color: #ffffff;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.business-actions a:hover {
+  background: #10523a;
+}
+
+.business-actions a[hidden] {
+  display: none;
+}
   </style>
 
 </head>
@@ -88,6 +114,13 @@
 
     <p id="business-description"></p>
 
+<div id="business-actions" class="business-actions">
+  <a id="call-button" href="#" hidden>📞 Call Business</a>
+  <a id="whatsapp-button" href="#" hidden>💬 WhatsApp</a>
+  <a id="directions-button" href="#" hidden>📍 Get Directions</a>
+  <a id="website-button" href="#" hidden>🌐 Visit Website</a>
+  <a id="email-button" href="#" hidden>✉️ Send Email</a>
+</div>
     <p id="business-hours"></p>
 
     <p
@@ -187,7 +220,41 @@
 
       const business =
         data[0];
+const callButton = document.getElementById("call-button");
+const whatsappButton = document.getElementById("whatsapp-button");
+const directionsButton = document.getElementById("directions-button");
+const websiteButton = document.getElementById("website-button");
+const emailButton = document.getElementById("email-button");
 
+if (business.phone) {
+  callButton.href = "tel:" + business.phone;
+  callButton.hidden = false;
+}
+
+if (business.whatsapp) {
+  const number = business.whatsapp.replace(/\D/g, "");
+  whatsappButton.href = "https://wa.me/" + number;
+  whatsappButton.hidden = false;
+}
+
+if (business.location_url) {
+  directionsButton.href = business.location_url;
+  directionsButton.target = "_blank";
+  directionsButton.rel = "noopener noreferrer";
+  directionsButton.hidden = false;
+}
+
+if (business.website_url) {
+  websiteButton.href = business.website_url;
+  websiteButton.target = "_blank";
+  websiteButton.rel = "noopener noreferrer";
+  websiteButton.hidden = false;
+}
+
+if (business.email) {
+  emailButton.href = "mailto:" + business.email;
+  emailButton.hidden = false;
+    }
 
       document.getElementById(
         "business-name"
