@@ -1799,8 +1799,20 @@ async function generateAndUploadQrCode(qrCodeId, destinationId) {
   }
 
 
-  const qrTargetUrl =
-    "https://duncancerullo2-pixel.github.io/nemesis-qr-hub/qr.html?slug=easygo-hardware";
+ const { data: destination, error: destinationError } =
+  await supabase
+    .from("qr_destinations")
+    .select("slug")
+    .eq("id", destinationId)
+    .single();
+
+if (destinationError || !destination) {
+  throw new Error("Could not find the QR destination.");
+}
+
+const qrTargetUrl =
+  "https://duncancerullo2-pixel.github.io/nemesis-qr-hub/qr.html?slug=" +
+  encodeURIComponent(destination.slug);
 
 
   const qrContainer =
