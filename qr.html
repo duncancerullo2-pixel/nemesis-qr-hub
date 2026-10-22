@@ -114,6 +114,13 @@
 
     <p id="business-description"></p>
 
+
+<section id="services-section" hidden>
+  <h2>Our Services</h2>
+  <div id="services-list"></div>
+</section>
+
+
 <div id="business-actions" class="business-actions">
   <a id="call-button" href="#" hidden>📞 Call Business</a>
   <a id="whatsapp-button" href="#" hidden>💬 WhatsApp</a>
@@ -220,6 +227,49 @@
 
       const business =
         data[0];
+
+const { data: services, error: servicesError } =
+  await supabaseClient.rpc(
+    "get_public_qr_services",
+    { p_slug: slug }
+  );
+
+if (servicesError) {
+  console.error("Unable to load services:", servicesError);
+} else if (services && services.length > 0) {
+  const servicesSection = document.getElementById("services-section");
+  const servicesList = document.getElementById("services-list");
+
+  servicesList.replaceChildren();
+
+  services.forEach((service) => {
+    const item = document.createElement("div");
+    const name = document.createElement("h3");
+    const description = document.createElement("p");
+    const price = document.createElement("p");
+
+    name.textContent = service.name || "";
+    description.textContent = service.description || "";
+    price.textContent =
+      service.price != null ? "Price: " + service.price : "";
+
+    item.append(name, description, price);
+
+    if (service.image_url) {
+      const image = document.createElement("img");
+      image.src = service.image_url;
+      image.alt = service.name || "Service";
+      image.loading = "lazy";
+      image.style.maxWidth = "100%";
+      item.append(image);
+    }
+
+    servicesList.append(item);
+  });
+
+  servicesSection.hidden = false;
+}
+
 const callButton = document.getElementById("call-button");
 const whatsappButton = document.getElementById("whatsapp-button");
 const directionsButton = document.getElementById("directions-button");
