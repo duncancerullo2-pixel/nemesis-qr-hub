@@ -876,7 +876,8 @@ const serviceMessage =
 const serviceList =
   document.getElementById("service-list");
 
-
+/* SERVICE EDIT MODE */
+let editingServiceId = null;
 /* LOAD CUSTOMERS INTO SERVICES SELECT */
 
 async function loadServiceCustomers() {
@@ -1115,6 +1116,44 @@ async function loadServices() {
 
     }
   );
+const editButton = document.createElement("button");
+
+editButton.type = "button";
+editButton.className = "button";
+editButton.textContent = "Edit Service";
+
+editButton.addEventListener("click", function() {
+  editingServiceId = service.id;
+
+  document.getElementById("service-name").value =
+    service.name || "";
+
+  document.getElementById("service-description").value =
+    service.description || "";
+
+  document.getElementById("service-price").value =
+    service.price ?? "";
+
+  document.getElementById("service-image-url").value =
+    service.image_url || "";
+
+  document.getElementById("service-sort-order").value =
+    service.sort_order ?? 0;
+
+  document.getElementById("service-active").value =
+    String(service.active);
+
+  serviceFormContainer.hidden = false;
+
+  if (serviceMessage) {
+    serviceMessage.textContent =
+      "Editing service: " + service.name;
+  }
+
+  document.getElementById("service-name").focus();
+});
+
+serviceCard.appendChild(editButton);
 
   serviceCard.appendChild(
     deleteButton
@@ -1215,35 +1254,32 @@ if (serviceForm) {
       }
 
 
-      const {
-        error
-      } = await supabase
-        .from("services")
-        .insert({
+      
+let saveQuery;
 
-      customer_id:
-  customerId,
+const serviceData = {
+  customer_id: customerId,
+  name: serviceName,
+  description: serviceDescription,
+  price: Number(servicePrice),
+  image_url: serviceImageUrl,
+  sort_order: Number(serviceSortOrder || 0),
+  active: serviceActive
+};
 
-          name:
-            serviceName,
+if (editingServiceId) {
+  saveQuery = supabase
+    .from("services")
+    .update(serviceData)
+    .eq("id", editingServiceId)
+    .eq("customer_id", customerId);
+} else {
+  saveQuery = supabase
+    .from("services")
+    .insert(serviceData);
+}
 
-          description:
-            serviceDescription,
-
-          price:
-  Number(servicePrice),
-
-          image_url:
-            serviceImageUrl,
-
-          sort_order:
-            Number(serviceSortOrder || 0),
-
-          active:
-            serviceActive
-
-        });
-
+const { error } = await saveQuery;
 
       if (error) {
 
@@ -1273,7 +1309,9 @@ if (serviceForm) {
       }
 
 
-      serviceForm.reset();
+    
+  serviceForm.reset();
+editingServiceId = null;
 
       document.getElementById(
         "service-sort-order"
@@ -1291,7 +1329,6 @@ if (serviceForm) {
 
 }
 
-
 /* CANCEL SERVICE FORM */
 
 if (
@@ -1302,6 +1339,11 @@ if (
   cancelServiceButton.addEventListener(
     "click",
     function() {
+editingServiceId = null;
+serviceForm.reset();
+
+document.getElementById("service-sort-order").value = "0";
+document.getElementById("service-active").value = "true";
 
       serviceFormContainer.hidden =
         true;
