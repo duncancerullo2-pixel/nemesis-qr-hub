@@ -224,8 +224,9 @@ adminStatus.textContent =
           window.location.replace("login.html");
         }, 1200);
 
-        return;
+               return;
       }
+    }
 
     checkAdminAccess();
   }
