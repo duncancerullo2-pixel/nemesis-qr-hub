@@ -1,0 +1,12 @@
+
+{
+  "name": "Nemesis QR Hub",
+  "short_name": "Nemesis QR",
+  "description": "Nemesis QR business and QR code management hub.",
+  "start_url": "/nemesis-qr-hub/dashboard.html",
+  "scope": "/nemesis-qr-hub/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#123456"
+}
