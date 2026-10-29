@@ -229,6 +229,7 @@ adminStatus.textContent =
     }
 
     checkAdminAccess();
+}
   
 
 
