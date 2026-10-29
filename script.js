@@ -200,7 +200,7 @@ if (adminError || !isAdmin) {
 adminStatus.textContent =
   "✓ Administrator authenticated — Admin";
 
-      } catch (error) {
+          } catch (error) {
 
         console.error(
           "Dashboard security check failed:",
@@ -208,9 +208,24 @@ adminStatus.textContent =
         );
 
         adminStatus.textContent =
-          "✗ Administrator verification failed.";
+          "✗ Administrator verification failed. Returning to login.";
+
+        // Fail closed if the security check crashes.
+        try {
+          await supabase.auth.signOut();
+        } catch (signOutError) {
+          console.error(
+            "Sign out after security-check failure failed:",
+            signOutError
+          );
+        }
+
+        setTimeout(function() {
+          window.location.replace("login.html");
+        }, 1200);
+
+        return;
       }
-    }
 
     checkAdminAccess();
   }
