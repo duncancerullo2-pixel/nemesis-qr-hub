@@ -568,6 +568,14 @@
   </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="script.js?v=100011" defer></script>
-
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./service-worker.js")
+        .then(() => console.log("Nemesis QR service worker registered"))
+        .catch((error) => console.error("Service worker registration failed:", error));
+    });
+  }
+      </script>
 </body>
 </html>
