@@ -139,68 +139,65 @@ console.log("NEMESIS QR SCRIPT IS RUNNING");
 
       try {
 
-      const sessionResult = await Promise.race([
-  supabase.auth.getSession(),
-  new Promise(function(resolve) {
-    setTimeout(function() {
-      resolve({
-        data: { session: null },
-        error: new Error("Authentication session check timed out.")
-      });
-    }, 5000);
-  })
-]);
+        const sessionResult = await Promise.race([
+          supabase.auth.getSession(),
+          new Promise(function(resolve) {
+            setTimeout(function() {
+              resolve({
+                data: { session: null },
+                error: new Error(
+                  "Authentication session check timed out."
+                )
+              });
+            }, 5000);
+          })
+        ]);
 
-const session = sessionResult.data.session;
-const sessionError = sessionResult.error;
+        const session =
+          sessionResult.data?.session;
 
-if (sessionError || !session || !session.user) {
+        if (
+          sessionResult.error ||
+          !session ||
+          !session.user
+        ) {
 
-  console.error(
-    "Session check failed:",
-    sessionError
-  );
+          adminStatus.textContent =
+            "✗ Session check failed. Please log in again.";
 
-  adminStatus.textContent =
-    "✗ Session check failed. Please log in again.";
+          window.location.replace("login.html");
 
-  setTimeout(function() {
-    window.location.replace("login.html");
-  }, 1500);
-
-  return;
-}
+          return false;
+        }
 
         const {
-  data: isAdmin,
-  error: adminError
-} = await supabase.rpc("is_nemesis_admin");
+          data: isAdmin,
+          error: adminError
+        } = await supabase.rpc("is_nemesis_admin");
 
-if (adminError || !isAdmin) {
+        if (adminError || !isAdmin) {
 
-  console.error(
-    "Administrator verification failed:",
-    adminError
-  );
+          console.error(
+            "Administrator verification failed:",
+            adminError
+          );
 
-  adminStatus.textContent =
-    "✗ Administrator access denied.";
+          adminStatus.textContent =
+            "✗ Administrator access denied.";
 
-  await supabase.auth.signOut();
+          await supabase.auth.signOut();
 
-  setTimeout(function() {
+          window.location.replace("login.html");
 
-    window.location.replace("login.html");
+          return false;
+        }
 
-  }, 1200);
+        adminStatus.textContent =
+          "✓ Administrator authenticated — Admin";
 
-  return;
-}
+        return true;
 
-adminStatus.textContent =
-  "✓ Administrator authenticated — Admin";
-
-          } catch (error) {
+      } catch (error) {
 
         console.error(
           "Dashboard security check failed:",
@@ -208,28 +205,33 @@ adminStatus.textContent =
         );
 
         adminStatus.textContent =
-          "✗ Administrator verification failed. Returning to login.";
+          "✗ Administrator verification failed.";
 
-        // Fail closed if the security check crashes.
         try {
           await supabase.auth.signOut();
         } catch (signOutError) {
           console.error(
-            "Sign out after security-check failure failed:",
+            "Sign out failed:",
             signOutError
           );
         }
 
-        setTimeout(function() {
-          window.location.replace("login.html");
-        }, 1200);
+        window.location.replace("login.html");
 
-               return;
+        return false;
       }
     }
 
-    checkAdminAccess();
-}
+    const authorized =
+      await checkAdminAccess();
+
+    if (!authorized) {
+      return;
+    }
+
+  }
+
+  
   
 
 
