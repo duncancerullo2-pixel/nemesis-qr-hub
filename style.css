@@ -397,3 +397,325 @@ footer {
   }
 
 }
+
+/* =========================================
+   NEMESIS QR — MODERN ADMIN DASHBOARD
+   Dashboard-only styling upgrade
+   ========================================= */
+
+.dashboard-page {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 28px 24px 55px;
+}
+
+/* HEADER */
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 26px;
+  margin-bottom: 22px;
+  background: linear-gradient(135deg, #101a14, #101414);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+}
+
+.dashboard-header h1 {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  margin: 8px 0;
+}
+
+.dashboard-header p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.dashboard-header .login-logo {
+  text-align: left;
+  margin-bottom: 5px;
+  letter-spacing: 2px;
+}
+
+/* SIGN OUT */
+
+#logout-button {
+  min-width: 115px;
+  white-space: nowrap;
+}
+
+/* SYSTEM STATUS */
+
+.dashboard-status {
+  background: linear-gradient(135deg, #111b14, #101414);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px 24px;
+  margin-bottom: 22px;
+}
+
+.dashboard-status h2 {
+  margin-bottom: 8px;
+}
+
+#admin-status {
+  color: var(--accent);
+  font-weight: 700;
+  margin: 0;
+}
+
+/* NAVIGATION */
+
+.dashboard-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 14px;
+  margin-bottom: 24px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.dashboard-navigation a {
+  display: inline-block;
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: 0.2s ease;
+}
+
+.dashboard-navigation a:hover,
+.dashboard-navigation a:focus {
+  color: var(--accent);
+  background: rgba(57, 211, 83, 0.08);
+  border-color: var(--border);
+}
+
+/* MANAGEMENT GRID */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 22px;
+}
+
+.dashboard-card {
+  min-width: 0;
+  padding: 24px;
+  background: linear-gradient(145deg, #101414, #121918);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+  scroll-margin-top: 20px;
+}
+
+.dashboard-card h2 {
+  color: var(--text);
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+}
+
+.dashboard-card h3 {
+  color: var(--accent);
+  font-size: 1rem;
+  margin: 20px 0 12px;
+}
+
+.dashboard-card p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* FORM LAYOUT */
+
+.dashboard-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.dashboard-card label {
+  display: block;
+  margin-top: 8px;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.dashboard-card input,
+.dashboard-card select,
+.dashboard-card textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 13px 14px;
+  border: 1px solid #303b35;
+  border-radius: 10px;
+  outline: none;
+  background: #080d0a;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 16px;
+}
+
+.dashboard-card textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.dashboard-card input:focus,
+.dashboard-card select:focus,
+.dashboard-card textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(57, 211, 83, 0.12);
+}
+
+/* BUTTONS */
+
+.dashboard-card .button {
+  width: 100%;
+  margin-top: 12px;
+  cursor: pointer;
+}
+
+.dashboard-card .secondary-button {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.dashboard-card .secondary-button:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dashboard-page .button {
+  cursor: pointer;
+}
+
+/* RECORD LISTS */
+
+.customer-list-section,
+#business-profile-list,
+#service-list,
+#destination-list,
+#qr-code-list {
+  margin-top: 22px;
+  overflow-wrap: anywhere;
+}
+
+#customer-list > *,
+#business-profile-list > *,
+#service-list > *,
+#destination-list > *,
+#qr-code-list > * {
+  margin-bottom: 12px;
+}
+
+#customer-list > div,
+#business-profile-list > div,
+#service-list > div,
+#destination-list > div,
+#qr-code-list > div {
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+/* FORM MESSAGES */
+
+#customer-message,
+#business-profile-message,
+#service-message,
+#destination-message,
+#qr-code-message,
+#dashboard-message {
+  margin-top: 14px;
+  overflow-wrap: anywhere;
+}
+
+/* HIDDEN FORM CONTAINERS */
+
+.dashboard-card [hidden] {
+  display: none !important;
+}
+
+/* BACK LINK */
+
+.dashboard-page > .back-link {
+  margin-top: 30px;
+}
+
+/* TABLET */
+
+@media (max-width: 900px) {
+  .dashboard-page {
+    padding: 20px 16px 40px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+  .dashboard-page {
+    padding: 14px 12px 35px;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    padding: 22px 16px;
+  }
+
+  .dashboard-header .login-logo {
+    text-align: center;
+  }
+
+  #logout-button {
+    width: 100%;
+  }
+
+  .dashboard-navigation {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .dashboard-navigation a {
+    text-align: center;
+    padding: 11px 6px;
+    font-size: 0.82rem;
+  }
+
+  .dashboard-card {
+    padding: 18px;
+  }
+
+  .dashboard-status {
+    padding: 18px;
+  }
+}
+
+/* SMALL PHONES */
+
+@media (max-width: 360px) {
+  .dashboard-navigation {
+    grid-template-columns: 1fr;
+  }
+}
