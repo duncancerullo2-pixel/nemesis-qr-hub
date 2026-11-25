@@ -617,24 +617,128 @@ customerCard.appendChild(customerStatus);
     businessProfileFormContainer
   ) {
 
-    profileCustomer.addEventListener(
-      "change",
-      function() {
 
-        if (profileCustomer.value) {
 
-          businessProfileFormContainer.hidden =
-            false;
+profileCustomer.addEventListener(
+  "change",
+  async function() {
 
-        } else {
+    const customerId = profileCustomer.value;
 
-          businessProfileFormContainer.hidden =
-            true;
+    if (!customerId) {
+      businessProfileFormContainer.hidden = true;
+      return;
+    }
 
-        }
+    businessProfileFormContainer.hidden = false;
 
+    const fields = [
+      "profile-category",
+      "profile-description",
+      "profile-logo-url",
+      "profile-phone",
+      "profile-whatsapp",
+      "profile-email",
+      "profile-address",
+      "profile-location-url",
+      "profile-website-url",
+      "profile-opening-hour"
+    ];
+
+    // Clear previous customer's details first.
+    fields.forEach(function(fieldId) {
+      document.getElementById(fieldId).value = "";
+    });
+
+    if (businessProfileMessage) {
+      businessProfileMessage.textContent =
+        "Checking for an existing business profile...";
+    }
+
+    const {
+      data: profile,
+      error
+    } = await supabase
+      .from("business_profiles")
+      .select(`
+        category,
+        description,
+        logo_url,
+        phone,
+        whatsapp,
+        email,
+        address,
+        location_url,
+        website_url,
+        opening_hour
+      `)
+      .eq("customer_id", customerId)
+      .maybeSingle();
+
+    if (error) {
+      console.error(
+        "Business profile lookup failed:",
+        error
+      );
+
+      if (businessProfileMessage) {
+        businessProfileMessage.textContent =
+          "Unable to load existing profile: " +
+          error.message;
       }
-    );
+
+      return;
+    }
+    if (profileCustomer.value !== customerId) {
+      return;
+              }
+    if (profile) {
+      document.getElementById("profile-category").value =
+        profile.category || "";
+
+      document.getElementById("profile-description").value =
+        profile.description || "";
+
+      document.getElementById("profile-logo-url").value =
+        profile.logo_url || "";
+
+      document.getElementById("profile-phone").value =
+        profile.phone || "";
+
+      document.getElementById("profile-whatsapp").value =
+        profile.whatsapp || "";
+
+      document.getElementById("profile-email").value =
+        profile.email || "";
+
+      document.getElementById("profile-address").value =
+        profile.address || "";
+
+      document.getElementById("profile-location-url").value =
+        profile.location_url || "";
+
+      document.getElementById("profile-website-url").value =
+        profile.website_url || "";
+
+      document.getElementById("profile-opening-hour").value =
+        profile.opening_hour || "";
+
+      if (businessProfileMessage) {
+        businessProfileMessage.textContent =
+          "Existing profile loaded. You can now edit it.";
+      }
+
+    } else {
+
+      if (businessProfileMessage) {
+        businessProfileMessage.textContent =
+          "No existing profile found. You can create one.";
+      }
+
+    }
+
+  }
+);
 
   }
 
@@ -857,25 +961,27 @@ profileCard.appendChild(profileOpening);
         }
 
 
-        const {
-          error
-        } = await supabase
-          .from("business_profiles")
-          .insert({
+        
+const {
+  error
+} = await supabase
+  .from("business_profiles")
+  .upsert({
+    customer_id: customerId,
+    category: category,
+    description: description,
+    logo_url: logoUrl,
+    phone: phone,
+    whatsapp: whatsapp,
+    email: email,
+    address: address,
+    location_url: locationUrl,
+    website_url: websiteUrl,
+    opening_hour: openingHour
+  }, {
+    onConflict: "customer_id"
+  });
 
-            customer_id: customerId,
-            category: category,
-            description: description,
-            logo_url: logoUrl,
-            phone: phone,
-            whatsapp: whatsapp,
-            email: email,
-            address: address,
-            location_url: locationUrl,
-            website_url: websiteUrl,
-            opening_hour: openingHour
-
-          });
 
 
         if (error) {
