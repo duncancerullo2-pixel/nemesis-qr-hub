@@ -362,11 +362,14 @@ console.log("NEMESIS QR SCRIPT IS RUNNING");
         "Customer loading failed:",
         error
       );
+const errorMessage = document.createElement("p");
 
-    customerList.innerHTML =
-  "<p>Unable to load customers: " +
-  error.message +
-  "</p>";
+errorMessage.textContent =
+  "Unable to load customers: " +
+  error.message;
+
+customerList.appendChild(errorMessage);
+  
       return;
     }
 
