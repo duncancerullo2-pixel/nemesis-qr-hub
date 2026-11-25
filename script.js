@@ -707,15 +707,34 @@ customerCard.appendChild(customerStatus);
       profileCard.className =
         "customer-item";
 
-      profileCard.innerHTML = `
-        <strong>${profile.category || "Business"}</strong>
-        <span>${profile.description || ""}</span>
-        <span>Phone: ${profile.phone || "Not provided"}</span>
-        <span>WhatsApp: ${profile.whatsapp || "Not provided"}</span>
-        <span>Email: ${profile.email || "Not provided"}</span>
-        <span>Address: ${profile.address || "Not provided"}</span>
-        <span>Opening: ${profile.opening_hour || "Not provided"}</span>
-      `;
+      const profileCategory = document.createElement("strong");
+profileCategory.textContent = profile.category || "Business";
+
+const profileDescription = document.createElement("span");
+profileDescription.textContent = profile.description || "";
+
+const profilePhone = document.createElement("span");
+profilePhone.textContent = "Phone: " + (profile.phone || "Not provided");
+
+const profileWhatsApp = document.createElement("span");
+profileWhatsApp.textContent = "WhatsApp: " + (profile.whatsapp || "Not provided");
+
+const profileEmail = document.createElement("span");
+profileEmail.textContent = "Email: " + (profile.email || "Not provided");
+
+const profileAddress = document.createElement("span");
+profileAddress.textContent = "Address: " + (profile.address || "Not provided");
+
+const profileOpening = document.createElement("span");
+profileOpening.textContent = "Opening: " + (profile.opening_hour || "Not provided");
+
+profileCard.appendChild(profileCategory);
+profileCard.appendChild(profileDescription);
+profileCard.appendChild(profilePhone);
+profileCard.appendChild(profileWhatsApp);
+profileCard.appendChild(profileEmail);
+profileCard.appendChild(profileAddress);
+profileCard.appendChild(profileOpening);
 
       businessProfileList.appendChild(
         profileCard
