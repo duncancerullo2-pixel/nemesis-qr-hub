@@ -388,12 +388,22 @@ console.log("NEMESIS QR SCRIPT IS RUNNING");
       customerCard.className =
         "customer-item";
 
-      customerCard.innerHTML = `
-        <strong>${customer.name}</strong>
-        <span>Code: ${customer.customer_code}</span>
-        <span>Type: ${customer.customer_type}</span>
-        <span>Status: ${customer.status}</span>
-      `;
+      const customerName = document.createElement("strong");
+customerName.textContent = customer.name || "Unnamed Customer";
+
+const customerCode = document.createElement("span");
+customerCode.textContent = "Code: " + (customer.customer_code || "Not provided");
+
+const customerType = document.createElement("span");
+customerType.textContent = "Type: " + (customer.customer_type || "Not provided");
+
+const customerStatus = document.createElement("span");
+customerStatus.textContent = "Status: " + (customer.status || "Not provided");
+
+customerCard.appendChild(customerName);
+customerCard.appendChild(customerCode);
+customerCard.appendChild(customerType);
+customerCard.appendChild(customerStatus);
 
       customerList.appendChild(customerCard);
 
