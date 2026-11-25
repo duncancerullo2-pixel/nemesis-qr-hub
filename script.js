@@ -1556,10 +1556,13 @@ async function loadDestinations() {
       error
     );
 
-    destinationList.innerHTML =
-      "<p>Unable to load destinations: " +
-      error.message +
-      "</p>";
+    const errorMessage = document.createElement("p");
+
+errorMessage.textContent =
+  "Unable to load destinations: " +
+  error.message;
+
+destinationList.appendChild(errorMessage);
 
     return;
   }
