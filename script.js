@@ -1586,15 +1586,22 @@ async function loadDestinations() {
       destinationCard.className =
         "customer-item";
 
-      destinationCard.innerHTML = `
-        <strong>${destination.slug}</strong>
-        <span>Type: ${
-          destination.destination_type
-        }</span>
-        <span>Status: ${
-          destination.status
-        }</span>
-      `;
+    const destinationSlug = document.createElement("strong");
+destinationSlug.textContent = destination.slug || "Unnamed Destination";
+
+const destinationType = document.createElement("span");
+destinationType.textContent = "Type: " + (
+  destination.destination_type || "Not provided"
+);
+
+const destinationStatus = document.createElement("span");
+destinationStatus.textContent = "Status: " + (
+  destination.status || "Not provided"
+);
+
+destinationCard.appendChild(destinationSlug);
+destinationCard.appendChild(destinationType);
+destinationCard.appendChild(destinationStatus);
 
       destinationList.appendChild(
         destinationCard
