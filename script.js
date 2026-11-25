@@ -1064,10 +1064,13 @@ async function loadServices() {
       error
     );
 
-    serviceList.innerHTML =
-      "<p>Unable to load services: " +
-      error.message +
-      "</p>";
+    const errorMessage = document.createElement("p");
+
+errorMessage.textContent =
+  "Unable to load services: " +
+  error.message;
+
+serviceList.appendChild(errorMessage);
 
     return;
   }
