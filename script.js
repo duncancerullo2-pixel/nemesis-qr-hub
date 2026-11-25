@@ -2180,20 +2180,35 @@ async function loadQrCodes() {
       qrCard.className =
         "customer-item";
 
-      qrCard.innerHTML = `
-  <strong>QR Code</strong>
-  <span>Format: ${qrCode.qr_format}</span>
-  <span>Status: ${qrCode.status}</span>
-  <span>File URL: ${qrCode.file_url || "Not generated yet"}</span>
+      const qrTitle = document.createElement("strong");
+qrTitle.textContent = "QR Code";
 
-  <button
-    type="button"
-    class="button"
-    id="generate-qr-${qrCode.id}"
-  >
-    Generate QR
-  </button>
-`;
+const qrFormat = document.createElement("span");
+qrFormat.textContent = "Format: " + (
+  qrCode.qr_format || "Not provided"
+);
+
+const qrStatus = document.createElement("span");
+qrStatus.textContent = "Status: " + (
+  qrCode.status || "Not provided"
+);
+
+const qrFileUrl = document.createElement("span");
+qrFileUrl.textContent = "File URL: " + (
+  qrCode.file_url || "Not generated yet"
+);
+
+const generateButton = document.createElement("button");
+generateButton.type = "button";
+generateButton.className = "button";
+generateButton.id = "generate-qr-" + qrCode.id;
+generateButton.textContent = "Generate QR";
+
+qrCard.appendChild(qrTitle);
+qrCard.appendChild(qrFormat);
+qrCard.appendChild(qrStatus);
+qrCard.appendChild(qrFileUrl);
+qrCard.appendChild(generateButton);
 const generateQrButton =
   qrCard.querySelector(
     "#generate-qr-" + qrCode.id
