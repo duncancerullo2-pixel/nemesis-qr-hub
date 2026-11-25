@@ -1091,17 +1091,30 @@ async function loadServices() {
   serviceCard.className =
     "customer-item";
 
-  serviceCard.innerHTML = `
-    <strong>${service.name || "Unnamed Service"}</strong>
-    <span>${service.description || ""}</span>
-    <span>Price: ${service.price ?? "Not provided"}</span>
-    <span>Status: ${
-      service.active ? "Active" : "Inactive"
-    }</span>
-    <span>Display Order: ${
-      service.sort_order ?? 0
-    }</span>
-  `;
+  const serviceName = document.createElement("strong");
+serviceName.textContent = service.name || "Unnamed Service";
+
+const serviceDescription = document.createElement("span");
+serviceDescription.textContent = service.description || "";
+
+const servicePrice = document.createElement("span");
+servicePrice.textContent = "Price: " + (service.price ?? "Not provided");
+
+const serviceStatus = document.createElement("span");
+serviceStatus.textContent = "Status: " + (
+  service.active ? "Active" : "Inactive"
+);
+
+const serviceOrder = document.createElement("span");
+serviceOrder.textContent = "Display Order: " + (
+  service.sort_order ?? 0
+);
+
+serviceCard.appendChild(serviceName);
+serviceCard.appendChild(serviceDescription);
+serviceCard.appendChild(servicePrice);
+serviceCard.appendChild(serviceStatus);
+serviceCard.appendChild(serviceOrder);
 
   const deleteButton =
     document.createElement("button");
