@@ -684,10 +684,13 @@ customerCard.appendChild(customerStatus);
         error
       );
 
-      businessProfileList.innerHTML =
-        "<p>Unable to load business profiles: " +
-        error.message +
-        "</p>";
+    const errorMessage = document.createElement("p");
+
+errorMessage.textContent =
+  "Unable to load business profiles: " +
+  error.message;
+
+businessProfileList.appendChild(errorMessage);
 
       return;
     }
