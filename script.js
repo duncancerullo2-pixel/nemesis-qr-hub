@@ -2162,10 +2162,13 @@ async function loadQrCodes() {
       error
     );
 
-    qrCodeList.innerHTML =
-      "<p>Unable to load QR codes: " +
-      error.message +
-      "</p>";
+    const errorMessage = document.createElement("p");
+
+errorMessage.textContent =
+  "Unable to load QR codes: " +
+  error.message;
+
+qrCodeList.appendChild(errorMessage);
 
     return;
   }
