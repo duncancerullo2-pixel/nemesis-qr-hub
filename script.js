@@ -1007,7 +1007,7 @@ const {
         }
 
 
-        businessProfileForm.reset();
+        
 
         await loadBusinessProfiles();
 
