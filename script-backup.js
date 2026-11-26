@@ -713,30 +713,32 @@ adminStatus.textContent =
 
   }
 
+/* CANCEL BUSINESS PROFILE FORM */
 
-  /* CANCEL BUSINESS PROFILE FORM */
+if (
+  cancelBusinessProfileButton &&
+  businessProfileFormContainer
+) {
 
-  if (
-    cancelBusinessProfileButton &&
-    businessProfileFormContainer
-  ) {
+  cancelBusinessProfileButton.addEventListener(
+    "click",
+    function() {
 
-    cancelBusinessProfileButton.addEventListener(
-      "click",
-      function() {
+      businessProfileFormContainer.hidden = true;
 
-        businessProfileFormContainer.hidden =
-          true;
+      businessProfileForm.reset();
 
-        if (businessProfileMessage) {
-          businessProfileMessage.textContent =
-            "";
-        }
+      profileCustomer.value = "";
 
+      if (businessProfileMessage) {
+        businessProfileMessage.textContent = "";
       }
-    );
 
-  }
+    }
+  );
+
+                  }
+  
 
 
   /* SAVE BUSINESS PROFILE */
