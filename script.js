@@ -1477,28 +1477,33 @@ const { error } = await saveQuery;
       }
 
 
-      if (serviceMessage) {
+      if (editingServiceId) {
 
-        serviceMessage.textContent =
-          "✓ Service saved successfully.";
+  if (serviceMessage) {
+    serviceMessage.textContent =
+      "✓ Service updated successfully. You can continue editing.";
+  }
 
-      }
+} else {
 
+  if (serviceMessage) {
+    serviceMessage.textContent =
+      "✓ Service added successfully.";
+  }
 
-    
   serviceForm.reset();
-editingServiceId = null;
 
-      document.getElementById(
-        "service-sort-order"
-      ).value = "0";
+  document.getElementById(
+    "service-sort-order"
+  ).value = "0";
 
-      document.getElementById(
-        "service-active"
-      ).value = "true";
+  document.getElementById(
+    "service-active"
+  ).value = "true";
 
+}
 
-      await loadServices();
+await loadServices();
 
     }
   );
